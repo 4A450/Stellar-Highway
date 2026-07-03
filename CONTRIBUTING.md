@@ -33,7 +33,8 @@ The [README](README.md#architecture-overview) has the full architecture tour —
 2. Expose an **`offx`** value — how far past its own origin the player must travel before it's safe to despawn. The generators use it to recycle.
 3. Make deadly sides kill the player with an `Area2D` that calls `body.tartar_sauce()` (see [`killPlayer.gd`](GameFiles/Gameplay%20Scripts/killPlayer.gd)), and lay [`Star`](GameFiles/Sprites/Currency/Star.tscn) instances along the *safe* path (players follow the stars).
 4. Register it in [`ObstacleGenerator.gd`](GameFiles/Gameplay%20Scripts/ObstacleGenerator.gd): add the scene to the `objs` array and include its index in the simple-spawn `match` arms. (Obstacles higher in the list appear later, as the spawn pool grows with distance.)
-5. Optionally add a heads-up warning via [`indicatorManager.gd`](GameFiles/Gameplay%20Scripts/Indicators/indicatorManager.gd).
+5. Consider Chaos mode too: ground-based obstacles join [`ChaosGenerator.gd`](GameFiles/Gameplay%20Scripts/ChaosGenerator.gd)'s `groundObjs` + `groundPick` (repeats in `groundPick` = higher spawn weight); flying/special ones join its `_air_event` pool. If your obstacle would be unfair at full chaos, give it a cap variable the generator sets before `add_child` — see `BatWall.max_walls` (single column in Chaos) and `UnderConstruction.max_sets` (max 2 pendulum sections) for the pattern. One caveat: if its warning indicator finds it by node name (like Airships'), Chaos must keep it one-at-a-time — see the `airships_alive`-style guards.
+6. Optionally add a heads-up warning via [`indicatorManager.gd`](GameFiles/Gameplay%20Scripts/Indicators/indicatorManager.gd).
 
 ### A new powerup
 1. Scene in `GameFiles/Sprites/Powerups/…`, script in `GameFiles/Gameplay Scripts/Powerups/…` — copy an existing one like [`Umbrella.gd`](GameFiles/Gameplay%20Scripts/Powerups/Umbrella.gd).

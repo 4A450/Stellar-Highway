@@ -23,7 +23,8 @@ func _initialize() -> void:
 		quit(1)
 
 ## Recursively loads every .gd under [param path], appending any that fail to [param failed].
-## Returns the number of scripts checked. Skips hidden dirs (.godot, .git) and this ci/ folder.
+## Returns the number of scripts checked. Skips hidden dirs (.godot, .git), this ci/ folder,
+## and android/ (the git-ignored build template ships Godot-internal scripts that don't compile).
 func _scan(path: String, failed: PackedStringArray) -> int:
 	var count := 0
 	var dir := DirAccess.open(path)
@@ -34,7 +35,7 @@ func _scan(path: String, failed: PackedStringArray) -> int:
 	while entry != "":
 		var full := path.path_join(entry)
 		if dir.current_is_dir():
-			if not entry.begins_with(".") and entry != "ci":
+			if not entry.begins_with(".") and entry != "ci" and entry != "android":
 				count += _scan(full, failed)
 		elif entry.ends_with(".gd"):
 			count += 1

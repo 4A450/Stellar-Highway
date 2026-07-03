@@ -41,9 +41,9 @@ The game ships with **three game modes**:
 
 | Mode | Scene | What happens |
 | --- | --- | --- |
-| **Endless Runner** | `GameFiles/Modes/EndlessRunnerMode.tscn` | The classic mode. Roll across a procedurally assembled skyline of buildings, dragons, airships, missiles and more. Score = distance travelled + stars collected. |
-| **Hole-in-a-Wall** | `GameFiles/Modes/HoleIn-a-WallMode.tscn` | "Wall-o-Bats." Walls made of bats fly toward you, each with a single gap. Draw a path through the gap. The walls get tighter and faster over time. |
+| **Endless Runner** | `GameFiles/Modes/EndlessRunnerMode.tscn` | The classic mode. Roll across a procedurally assembled skyline of buildings, dragons, airships, missiles and more — one obstacle at a time. Score = distance travelled + stars collected. |
 | **Missiles** | `GameFiles/Modes/MissilesMode.tscn` | A wave-based survival mode. Homing and timed missiles chase you from all sides. Survive each wave to score. Lock-on missiles can be detonated by steering them into a line you draw. |
+| **Chaos** | `GameFiles/Modes/ChaosMode.tscn` | Endless Runner's extreme sibling: several obstacles are alive at once — a conveyor of buildings with shrinking gaps *plus* missiles, dragons, airships and bat walls firing on their own timer — and the spawning keeps accelerating until it maxes out ([`ChaosGenerator.gd`](GameFiles/Gameplay%20Scripts/ChaosGenerator.gd)). |
 
 ---
 
@@ -70,7 +70,7 @@ The game is designed for touch, but it has full keyboard support (handy for test
 - **M** — mute / unmute.
 
 **In the main menu**
-- **1 / 2 / 3** — pick Endless / Hole-in-a-Wall / Missiles.
+- **1 / 2 / 3** — pick Endless / Chaos / Missiles.
 - **1–6** — select a character (in the character row).
 - **S** — open / close the shop.
 - **Enter** — start the selected mode.
@@ -165,7 +165,7 @@ EndlessRunnerMode (Node2D)            ← root; OST script picks music & sets th
     └── Loading                       ← the load-in / load-out animation
 ```
 
-Hole-in-a-Wall swaps `ObstacleGenerator` for [`WallGenManager`](GameFiles/Gameplay%20Scripts/WallGenManager.gd); Missiles swaps it for [`MissileGenManager`](GameFiles/Gameplay%20Scripts/MissileGenManager.gd) and a `GetThemOut` node that slides the starting platform away once the fight begins.
+Missiles swaps `ObstacleGenerator` for [`MissileGenManager`](GameFiles/Gameplay%20Scripts/MissileGenManager.gd) and a `GetThemOut` node that slides the starting platform away once the fight begins. Chaos is the same scene as Endless with `ObstacleGenerator` swapped for [`ChaosGenerator`](GameFiles/Gameplay%20Scripts/ChaosGenerator.gd).
 
 ### The Player & Physics
 
@@ -189,8 +189,8 @@ The **Doppelgänger** powerup spawns a second body using the [`PlayerSUS.tscn`](
 The world ahead of the player is generated and recycled by one manager per mode:
 
 - [`ObstacleGenerator.gd`](GameFiles/Gameplay%20Scripts/ObstacleGenerator.gd) (Endless) — keeps a single obstacle on screen at a time. It picks an obstacle by random index (the pool of allowed obstacles *grows* with distance for a difficulty curve), positions it ahead of the player scaled by the current aspect ratio, and frees it once the player has passed. Dragons and missile groups have bespoke multi-spawn logic.
-- [`WallGenManager.gd`](GameFiles/Gameplay%20Scripts/WallGenManager.gd) (Hole-in-a-Wall) — spawns bat walls whose gap tightens and difficulty rises with each wall.
 - [`MissileGenManager.gd`](GameFiles/Gameplay%20Scripts/MissileGenManager.gd) (Missiles) — an `await`-driven wave loop: announce "Wave N", spawn `N×2` missiles from random edges, wait, award score/stars, repeat.
+- [`ChaosGenerator.gd`](GameFiles/Gameplay%20Scripts/ChaosGenerator.gd) (Chaos) — two overlapping systems: a ground *conveyor* that lays obstacles end-to-end with gaps that shrink over distance, plus timed *air events* (missiles, dragons, airships, bat walls) that fire faster and faster — both ramping until a threshold, so many hazards are alive at once.
 
 Each obstacle scene exposes an `offx` value (how far past its own origin the player must travel before it's safe to despawn), which the generators use to recycle cleanly.
 
@@ -203,7 +203,7 @@ The game renders at a fixed **1080 px height**, but the width is flexible to fit
 [`Utils.gd`](GameFiles/Gameplay%20Scripts/Utils.gd) (on the `Utils` node) owns persistence. Two JSON files are written under Godot's `user://` directory:
 
 - `savefile.bin` — `{ "playerCharacter": int, "Stars": int, "ownedChars": [6 bools] }`
-- `scorefile.bin` — `{ "0": int, "1": int, "2": int }` — the high score for each of the three modes.
+- `scorefile.bin` — `{ "0": int, "1": int, "2": int }` — the high score per mode (0 Endless, 1 Chaos, 2 Missiles; slot 1 previously belonged to the removed Hole-in-a-Wall mode).
 
 Player preferences live in a third file, `settings.bin`, owned by the [`Settings`](GameFiles/Gameplay%20Scripts/Settings.gd) autoload rather than `Utils` (see [Audio, Settings & Game Feel](#audio-settings--game-feel)). All three files are written **atomically** — to a temp file that's swapped into place only once the write fully succeeds — and validated on load, so an interrupted or corrupt write falls back to defaults instead of bricking the data.
 
@@ -257,7 +257,7 @@ A system-by-system index of the scripts under `GameFiles/`. Each file also carri
 - [`jump_btn.gd`](GameFiles/Gameplay%20Scripts/jump_btn.gd) — on-screen bounce button.
 
 **World generation & flow**
-- [`ObstacleGenerator.gd`](GameFiles/Gameplay%20Scripts/ObstacleGenerator.gd), [`WallGenManager.gd`](GameFiles/Gameplay%20Scripts/WallGenManager.gd), [`MissileGenManager.gd`](GameFiles/Gameplay%20Scripts/MissileGenManager.gd), [`DragonsGenerator.gd`](GameFiles/Gameplay%20Scripts/DragonsGenerator.gd) — spawners.
+- [`ObstacleGenerator.gd`](GameFiles/Gameplay%20Scripts/ObstacleGenerator.gd), [`ChaosGenerator.gd`](GameFiles/Gameplay%20Scripts/ChaosGenerator.gd), [`MissileGenManager.gd`](GameFiles/Gameplay%20Scripts/MissileGenManager.gd), [`DragonsGenerator.gd`](GameFiles/Gameplay%20Scripts/DragonsGenerator.gd) — spawners.
 - [`gameStarter.gd`](GameFiles/Gameplay%20Scripts/gameStarter.gd), [`spdManager.gd`](GameFiles/Gameplay%20Scripts/spdManager.gd), [`GetThemOut.gd`](GameFiles/Gameplay%20Scripts/GetThemOut.gd) — run start & speed ramp.
 - [`NOPE.gd`](GameFiles/Gameplay%20Scripts/NOPE.gd), [`Barrier.gd`](GameFiles/Gameplay%20Scripts/Barrier.gd), [`killPlayer.gd`](GameFiles/Gameplay%20Scripts/killPlayer.gd), [`MaskSetter.gd`](GameFiles/Gameplay%20Scripts/MaskSetter.gd) — invisible guards & collision-layer switching.
 - [`EndlessRunnerModeOST.gd`](GameFiles/Gameplay%20Scripts/EndlessRunnerModeOST.gd) — mode root: picks music, sets the gamemode index.

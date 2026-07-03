@@ -47,7 +47,6 @@
 [ext_resource type="Texture2D" uid="uid://cwss2llmmxx7s" path="res://GameFiles/SpinHead IMGS/UI/menu/gamemodeMenu/missiles/f.png" id="42_0ci37"]
 [ext_resource type="Texture2D" uid="uid://dxvixyieeraf0" path="res://GameFiles/SpinHead IMGS/UI/menu/charsBTN/3/t1.png" id="42_7e4r0"]
 [ext_resource type="Texture2D" uid="uid://266r7dhdq55w" path="res://GameFiles/SpinHead IMGS/UI/menu/charsBTN/4/t0.png" id="43_6g37d"]
-[ext_resource type="Texture2D" uid="uid://dhk457wv0354v" path="res://GameFiles/SpinHead IMGS/UI/menu/gamemodeMenu/batWalls/f.png" id="43_oaqxt"]
 [ext_resource type="Texture2D" uid="uid://b5uumtxb2ay44" path="res://GameFiles/SpinHead IMGS/UI/menu/charsBTN/4/t1.png" id="44_hiicr"]
 [ext_resource type="Texture2D" uid="uid://chkv8k6mkxiad" path="res://GameFiles/SpinHead IMGS/UI/menu/charsBTN/5/t0.png" id="45_x036p"]
 [ext_resource type="Texture2D" uid="uid://fq70cvv0f3eb" path="res://GameFiles/SpinHead IMGS/UI/menu/charsBTN/5/t1.png" id="46_vmqx4"]
@@ -65,6 +64,7 @@
 [ext_resource type="Script" uid="uid://b8mo8qlj4o1k8" path="res://GameFiles/Gameplay Scripts/Currency/menuStars.gd" id="60_irjnr"]
 [ext_resource type="Texture2D" uid="uid://cn5qb3yihcuee" path="res://GameFiles/SpinHead IMGS/UI/menu/mute/notmuted.png" id="61_t1f4y"]
 [ext_resource type="Script" uid="uid://c64kejwrsa1k8" path="res://GameFiles/Gameplay Scripts/mute.gd" id="62_2ky4e"]
+[ext_resource type="Texture2D" uid="uid://bqme878rch0dd" path="res://GameFiles/SpinHead IMGS/UI/menu/gamemodeMenu/chaos/f.png" id="66_dj4j0"]
 [ext_resource type="Texture2D" uid="uid://dhwh2txpyhphl" path="res://GameFiles/SpinHead IMGS/UI/menu/tutorialBook/bookBTN/tutBTN.png" id="68_0y2u4"]
 [ext_resource type="Texture2D" uid="uid://b8djex0y4whrb" path="res://GameFiles/SpinHead IMGS/UI/menu/settingsBTN/emptyBTN.png" id="69_g7ge2"]
 [ext_resource type="Texture2D" uid="uid://dyc87rkfvelk7" path="res://GameFiles/SpinHead IMGS/UI/menu/settingsBTN/cogs.png" id="70_wd5pq"]
@@ -1256,14 +1256,14 @@ focus_mode = 0
 icon = ExtResource("41_vnbhw")
 flat = true
 
-[node name="batwallsBTN" type="Button" parent="UI/LeftCenter/Gamemodes" unique_id=489966771]
+[node name="chaosBTN" type="Button" parent="UI/LeftCenter/Gamemodes" unique_id=111535962]
 offset_left = -10.0
 offset_top = -2.0
 offset_right = 259.0
 offset_bottom = 126.0
 pivot_offset = Vector2(117, -50)
 focus_mode = 0
-icon = ExtResource("43_oaqxt")
+icon = ExtResource("66_dj4j0")
 flat = true
 
 [node name="missilesBTN" type="Button" parent="UI/LeftCenter/Gamemodes" unique_id=196678921]
@@ -1503,7 +1503,7 @@ process_mode = 3
 [connection signal="pressed" from="UI/TopRight/tutBTN" to="UI/TopRight/shopBTN" method="_on_tut_btn_pressed"]
 [connection signal="pressed" from="UI/TopRight/settingsBTN" to="UI/TopRight/shopBTN" method="_on_settings_btn_pressed"]
 [connection signal="pressed" from="UI/LeftCenter/Gamemodes/endlessBTN" to="UI/LeftCenter/Gamemodes/Gamemodes" method="_on_endless_btn_pressed"]
-[connection signal="pressed" from="UI/LeftCenter/Gamemodes/batwallsBTN" to="UI/LeftCenter/Gamemodes/Gamemodes" method="_on_batwalls_btn_pressed"]
+[connection signal="pressed" from="UI/LeftCenter/Gamemodes/chaosBTN" to="UI/LeftCenter/Gamemodes/Gamemodes" method="_on_chaos_btn_pressed"]
 [connection signal="pressed" from="UI/LeftCenter/Gamemodes/missilesBTN" to="UI/LeftCenter/Gamemodes/Gamemodes" method="_on_missiles_btn_pressed"]
 [connection signal="pressed" from="UI/Center/tutorialBook/PageBg/closeBTN" to="UI/Center/tutorialBook" method="_on_close_btn_pressed"]
 [connection signal="pressed" from="UI/Center/tutorialBook/PageBg/forwardBTN" to="UI/Center/tutorialBook" method="_on_forward_btn_pressed"]

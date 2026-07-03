@@ -1,15 +1,17 @@
 extends Node2D
 ## A "Wall-o-Bats": one or more vertical walls of bats, each with a single gap to fit through.
 ##
-## Builds 1-4 columns; each column is 25 bats tall except for a randomly placed gap (marked
-## with stars so you can see the safe path). The whole wall scrolls left toward the player.
-## Used both in Endless mode and as the main obstacle of Hole-in-a-Wall mode (see WallGenManager,
-## which sets [member wall_dist]/[member difficulty] to tighten and speed up walls over time).
+## Builds up to [member max_walls] columns; each column is 25 bats tall except for a randomly
+## placed gap (marked with stars so you can see the safe path). The whole wall scrolls left
+## toward the player. Used in Endless mode and (capped to a single column, with
+## [member wall_dist]/[member difficulty] scaled by the ramp) as a Chaos-mode air event.
 
 var offx:int = 1920       ## Despawn clearance distance (depends on how many columns spawned).
 var wall_dist:int = 1920  ## Horizontal spacing between columns.
+var max_walls:int = 4     ## Most columns this wall may roll (set before adding to the tree).
+						  ## Chaos mode caps it at 1 — multi-column walls are unfair there.
 
-var walls:int             ## Number of columns in this wall (1-4).
+var walls:int             ## Number of columns in this wall (1 to max_walls).
 var dontman:int           ## Row index of the gap in the current column.
 var velocity:float = 1.0  ## Base leftward scroll speed.
 var difficulty:float = 1.0 ## Scroll-speed multiplier (raised for later walls).
@@ -19,7 +21,7 @@ var wb:Node2D             ## Scratch: each bat or star being placed.
 
 func _ready() -> void:
 	randomize()
-	walls = randi()%4 + 1
+	walls = randi() % max_walls + 1
 	offx = (walls - 1) * wall_dist + 1024
 	for i in range(walls):
 		dontman = randi()%22 + 1

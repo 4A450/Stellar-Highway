@@ -5,16 +5,18 @@ extends Node2D
 ## wrecking ball started at a random angle and swing strength. Touching anything here is lethal.
 
 var offx:int = 500  ## Despawn clearance distance (grows with the number of sections).
+var max_sets:int = 4  ## Most sections this site may build (set before adding to the tree).
+					  ## Chaos mode caps it at 2 — more pendulums are unfair there.
 
 @onready var HeavyPendulum:Resource = preload("res://GameFiles/Sprites/Obstacles/Buildings/UnderConstruction/HeavyPendulum.tscn")
 @onready var IncompleteBuilding:Resource = preload("res://GameFiles/Sprites/Obstacles/Buildings/UnderConstruction/IncompleteBuilding.tscn")
 var building:Array = [null, null]  ## Scratch: [pendulum, tower] for the section being built.
-var morePlz:int = 1  ## How many construction sections to spawn (1-4).
+var morePlz:int = 1  ## How many construction sections to spawn (1 to max_sets).
 
 func _ready() -> void:
 	randomize()
 	position.y = 540
-	morePlz = 1 + randi() % 4
+	morePlz = 1 + randi() % max_sets
 	offx += (morePlz - 1) * 1024
 	for i in range(morePlz):
 		building[0] = HeavyPendulum.instantiate()

@@ -75,7 +75,7 @@ var spinSpd:float              ## Per-frame rotation applied to the rolling spri
 @onready var chars:Array[Node] = get_node("Characters").get_children()
 @onready var Utils:Node2D = get_tree().get_first_node_in_group("Utils")
 var trail:Line2D               ## The speed-line trail behind the player.
-var gamemode:int = 0           ## 0 Endless, 1 Hole-in-a-Wall, 2 Missiles (set by the mode's OST script).
+var gamemode:int = 0           ## 0 Endless, 1 Chaos, 2 Missiles (set by the mode's OST script).
 var ground_ray:RayCast2D       ## The ground sensor chosen as authoritative this step.
 var can_jump:bool = false      ## Whether jumping is allowed (enabled by the Lowrider powerup).
 var pre_speed:float = 0        ## Ground speed remembered at takeoff, restored on landing for the Jetpack.

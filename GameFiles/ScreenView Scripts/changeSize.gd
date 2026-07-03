@@ -12,8 +12,8 @@ var last_size:Vector2 = Vector2(1920, 1080)     ## Window size seen last frame (
 var win_size:Vector2 = Vector2(1920, 1080)      ## Current window/screen size.
 var true_scalex:float = 1.0  ## Horizontal scale factor vs the design width.
 var true_scaley:float = 1.0  ## Vertical scale factor vs the design height.
-var cameraOffx = [420, 420, 0]  ## Per-mode camera X offset (Endless/Wall look ahead; Missiles is centred).
-var gamemode:int = 0  ## 0 Endless, 1 Hole-in-a-Wall, 2 Missiles (set by the mode's OST script).
+var cameraOffx = [420, 420, 0]  ## Per-mode camera X offset (Endless/Chaos look ahead; Missiles is centred).
+var gamemode:int = 0  ## 0 Endless, 1 Chaos, 2 Missiles (set by the mode's OST script).
 
 func _ready() -> void:
 	add_to_group("Playfield")

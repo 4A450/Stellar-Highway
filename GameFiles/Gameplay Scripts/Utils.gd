@@ -3,7 +3,7 @@ extends Node2D
 ##
 ## Two JSON files under Godot's [code]user://[/code] directory:
 ## [br]• [code]savefile.bin[/code]  — { playerCharacter, Stars, ownedChars[6] }
-## [br]• [code]scorefile.bin[/code] — { "0", "1", "2" } high score per game mode
+## [br]• [code]scorefile.bin[/code] — { "0".."2" } high score per game mode
 ## [br]Reached by other scripts via the "Utils" group.
 
 var SAVE_PATH:String = "user://savefile.bin"   ## Character selection, star balance, owned characters.
@@ -39,8 +39,9 @@ func savegame(selChar:int, stars:int = 0, ownedChars = null) -> void:
 	loaded_data = data
 	_store_json(SAVE_PATH, data)
 
-## Records [param score] as the high score for [param gamemode] (0-2), keeping the
-## existing best if it's higher.
+## Records [param score] as the high score for [param gamemode] (0 Endless, 1 Chaos,
+## 2 Missiles), keeping the existing best if it's higher. Note: slot 1 belonged to the
+## removed Hole-in-a-Wall mode, so pre-existing saves show their old wall score there.
 func saveScore(score:int, gamemode:int) -> void:
 	var games:Array = [0, 0, 0]
 	if scores:

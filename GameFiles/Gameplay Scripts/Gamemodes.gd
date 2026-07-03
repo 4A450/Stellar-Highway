@@ -2,12 +2,12 @@ extends Sprite2D
 ## The main-menu game-mode picker.
 ##
 ## Tracks which mode is selected (its scene path is exposed as [member mode], which
-## gameStart.gd reads when launching). Updates the three buttons' highlighted icons and
+## gameStart.gd reads when launching). Updates the buttons' highlighted icons and
 ## the high-score clapperboard when the selection changes. Keys 1/2/3 are shortcuts.
 
-## The three selectable mode scenes, in button order.
+## The selectable mode scenes, in button order (buttons are this node's siblings).
 var modes:Array[String] = ["res://GameFiles/Modes/EndlessRunnerMode.tscn",
-	"res://GameFiles/Modes/HoleIn-a-WallMode.tscn",
+	"res://GameFiles/Modes/ChaosMode.tscn",
 	"res://GameFiles/Modes/MissilesMode.tscn"
 ]
 var mode:String = modes[0]  ## The currently selected mode's scene path.
@@ -18,8 +18,8 @@ var textures:Array = [
 		preload("res://GameFiles/SpinHead IMGS/UI/menu/gamemodeMenu/endless/t.png")
 	],
 	[
-		preload("res://GameFiles/SpinHead IMGS/UI/menu/gamemodeMenu/batWalls/f.png"),
-		preload("res://GameFiles/SpinHead IMGS/UI/menu/gamemodeMenu/batWalls/t.png")
+		preload("res://GameFiles/SpinHead IMGS/UI/menu/gamemodeMenu/chaos/f.png"),
+		preload("res://GameFiles/SpinHead IMGS/UI/menu/gamemodeMenu/chaos/t.png")
 	],
 	[
 		preload("res://GameFiles/SpinHead IMGS/UI/menu/gamemodeMenu/missiles/f.png"),
@@ -39,7 +39,7 @@ func _input(_ev:InputEvent) -> void:
 		if Input.is_key_pressed(KEY_1):
 			_on_endless_btn_pressed()
 		elif Input.is_key_pressed(KEY_2):
-			_on_batwalls_btn_pressed()
+			_on_chaos_btn_pressed()
 		elif Input.is_key_pressed(KEY_3):
 			_on_missiles_btn_pressed()
 		noSpam = false
@@ -53,7 +53,7 @@ func generalPressed(btn:int) -> void:
 		return
 	mode = modes[btn]
 	clipperBoi.changeScore(btn)
-	for i in range(3):
+	for i in range(modes.size()):
 		if btn == i:
 			btns[i+1].icon = textures[i][1]
 		else:
@@ -63,7 +63,7 @@ func generalPressed(btn:int) -> void:
 func _on_endless_btn_pressed() -> void:
 	generalPressed(0)
 
-func _on_batwalls_btn_pressed() -> void:
+func _on_chaos_btn_pressed() -> void:
 	generalPressed(1)
 
 func _on_missiles_btn_pressed() -> void:

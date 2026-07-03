@@ -3,8 +3,9 @@ extends Node2D
 ##
 ## Despite the name it runs for all three modes (the scene's root node has this script).
 ## It picks a random gameplay track, and — based on the scene's [code]name[/code] — sets the
-## [code]gamemode[/code] index (0/1/2) on both the player and the sizeChange node. It also
-## intercepts the Android back button / window close to pause instead of quitting.
+## [code]gamemode[/code] index (0 Endless, 1 Chaos, 2 Missiles) on both the player and the
+## sizeChange node. It also intercepts the Android back button / window close to pause
+## instead of quitting.
 
 var bg_music := AudioStreamPlayer.new()
 
@@ -26,14 +27,16 @@ func _ready() -> void:
 	add_child(bg_music)
 	
 	if name == "EndlessRunnerMode":
-		get_node("sizeChange/Player").gamemode = 0
-		get_node("sizeChange").gamemode = 0
-	elif name == "HoleIn-a-WallMode":
-		get_node("sizeChange/Player").gamemode = 1
-		get_node("sizeChange").gamemode = 1
-	else:
-		get_node("sizeChange/Player").gamemode = 2
-		get_node("sizeChange").gamemode = 2
+		_set_gamemode(0)
+	elif name == "ChaosMode":
+		_set_gamemode(1)
+	else: # MissilesMode
+		_set_gamemode(2)
+
+## Stamps the mode index onto the player (for score saving) and sizeChange (camera offset).
+func _set_gamemode(idx:int) -> void:
+	get_node("sizeChange/Player").gamemode = idx
+	get_node("sizeChange").gamemode = idx
 
 ## Back button / window close during a run pauses the game instead of quitting.
 func _notification(what) -> void:
