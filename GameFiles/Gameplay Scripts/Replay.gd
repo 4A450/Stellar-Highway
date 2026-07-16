@@ -93,6 +93,11 @@ func start_run() -> void:
 	_entities = []
 	_pending = null
 	recording = true
+	# The starting platform is authored into the mode scene (not generator-spawned), so track
+	# it explicitly — streamed, since Missiles mode slides it away once the fight begins.
+	var platform: Node2D = pf.get_node_or_null("Building1")
+	if platform:
+		track(platform, 0, {"start_platform": true}, true)
 
 ## Seeds the global RNG with a fresh random seed and returns it. Generators call this right
 ## before instancing an obstacle, so the obstacle's _ready randomness becomes reproducible:
@@ -106,9 +111,10 @@ func seed_spawn() -> int:
 ## Registers a spawned obstacle for the recording. [param seed_val] is what seed_spawn()
 ## returned for it; [param props] are the generator-set properties that affect construction
 ## or self-driven motion (e.g. BatWall's wall_dist/difficulty, a Dragon's drift).
-## Trajectories are streamed per-tick only for player-dependent movers (missiles, the clone);
-## everything else replays from (seed + props + spawn/despawn ticks) alone.
-func track(node: Node2D, seed_val: int, props: Dictionary = {}) -> void:
+## Trajectories are streamed per-tick only for player-dependent movers (missiles, the clone)
+## and nodes tracked with [param force_stream]; everything else replays from
+## (seed + props + spawn/despawn ticks) alone.
+func track(node: Node2D, seed_val: int, props: Dictionary = {}, force_stream: bool = false) -> void:
 	if not recording or node == null:
 		return
 	var path := node.scene_file_path
@@ -118,7 +124,7 @@ func track(node: Node2D, seed_val: int, props: Dictionary = {}) -> void:
 		"props": props, "t1": -1,
 		"stream": PackedFloat32Array(),
 		"_node": node,
-		"_streamed": path.ends_with("Missile.tscn") or path.ends_with("TimedMissile.tscn") or path.ends_with("PlayerSUS.tscn"),
+		"_streamed": force_stream or path.ends_with("Missile.tscn") or path.ends_with("TimedMissile.tscn") or path.ends_with("PlayerSUS.tscn"),
 	})
 
 ## Records one drawn terrain segment; returns its id so CollLine can report its fade later.
