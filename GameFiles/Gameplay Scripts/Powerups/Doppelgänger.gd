@@ -15,6 +15,7 @@ func _on_hitbox_body_entered(body:Node) -> void:
 	if body.name == "Player" and not sus:
 		sus = true
 		Settings.vibrate(30)
+		Replay.record_event(Replay.EV_POWERUP, global_position)
 		get_tree().get_nodes_in_group("PowerupPopUps")[0].text = "DOPPELGÄNGER"
 		get_tree().get_nodes_in_group("PowerupPopUps")[0].get_node("AnimationPlayer").play("PopUp")
 		get_tree().get_nodes_in_group("PowerupPopUps")[3].visible = true

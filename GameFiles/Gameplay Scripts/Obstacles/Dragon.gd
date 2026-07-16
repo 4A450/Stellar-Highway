@@ -31,7 +31,6 @@ var killme:bool = true   ## If still true after 5s (player never engaged), self-
 var sin_step:float = 0.2 ## Phase advance per body point (wave frequency).
 
 func _ready() -> void:
-	randomize()
 	mxSize = 32 + randi() % 97
 	chx = 16 + randi() % 9
 	if randi() % 2:

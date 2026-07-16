@@ -12,6 +12,7 @@ func _on_hitbox_body_entered(body:Node) -> void:
 	if body.name == "Player" and not sus:
 		sus = true
 		Settings.vibrate(30)
+		Replay.record_event(Replay.EV_POWERUP, global_position)
 		body.can_jump = true
 		get_tree().get_first_node_in_group("MoreBounce").visible = true
 		get_tree().get_nodes_in_group("PowerupPopUps")[0].text = "LOWRIDER"

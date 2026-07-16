@@ -24,6 +24,7 @@ Stellar Highway is a passion project that wasn't built to make money, so as a bi
   - [Resolution Scaling](#resolution-scaling)
   - [Saving & Progression](#saving--progression)
   - [Audio, Settings & Game Feel](#audio-settings--game-feel)
+  - [Replays](#replays)
   - [The "Groups" Wiring](#the-groups-wiring)
 - [Code Map](#code-map)
 - [Glossary of Odd Names](#glossary-of-odd-names)
@@ -121,7 +122,7 @@ A few conventions to keep in mind while reading the source:
 
 - **One script per node.** Almost every script `extends` a Godot node type and is attached directly to a node in a scene. Some nodes exist *only* to host a script (a manager or generator with no visuals).
 - **Scripts in `Gameplay Scripts/` ↔ scenes in `Sprites/`.** A script like `Obstacles/Dragon.gd` is the brain attached to the scene `Sprites/Obstacles/Dragon/Dragon.tscn`. Generators `preload` and `instantiate` these `.tscn` files.
-- **Two autoloads, `Refs` and `Settings`.** [`Refs.gd`](GameFiles/Gameplay%20Scripts/Refs.gd) is a small project-wide singleton holding shared screen/world constants and validity-cached accessors for the handful of nodes scripts fetch constantly (player, playfield, score…). [`Settings.gd`](GameFiles/Gameplay%20Scripts/Settings.gd) holds the persisted player preferences (music volume, haptics, screen shake, assist-draw) and applies them. Beyond those, cross-object communication happens through **Godot groups** (see [The "Groups" Wiring](#the-groups-wiring)) and relative node paths.
+- **Three autoloads: `Refs`, `Settings` and `Replay`.** [`Refs.gd`](GameFiles/Gameplay%20Scripts/Refs.gd) is a small project-wide singleton holding shared screen/world constants and validity-cached accessors for the handful of nodes scripts fetch constantly (player, playfield, score…). [`Settings.gd`](GameFiles/Gameplay%20Scripts/Settings.gd) holds the persisted player preferences (music volume, haptics, screen shake, ghost, assist-draw) and applies them. [`Replay.gd`](GameFiles/Gameplay%20Scripts/Replay.gd) records every run — save it from the game-over screen, watch it back from the Settings panel (see [Replays](#replays)). Beyond those, cross-object communication happens through **Godot groups** (see [The "Groups" Wiring](#the-groups-wiring)) and relative node paths.
 - **No multithreaded gameplay code.** (`project.godot` enables physics on a separate thread, but the game logic itself is single-threaded and easy to follow.)
 
 ---
@@ -219,9 +220,23 @@ There are **6 characters** (indices 0–5). Character 0 is free; the rest cost `
 - **Screen shake** → whether `Refs.shake()` is allowed to shake the camera.
 - **Assist draw** (`draw_offset`) → lifts the drawn line above the finger so your hand doesn't cover the action (off by default).
 
+The Settings panel also hosts the **saved-replays browser** (see [Replays](#replays)).
+
 The player-facing controls are a small scene, [`SettingsControls.tscn`](GameFiles/Sprites/UI/SettingsControls.tscn) (wired by [`SettingsControls.gd`](GameFiles/Gameplay%20Scripts/SettingsControls.gd)), instanced into the main menu's Settings panel. A control just calls `Settings.set_value(key, value)` and the autoload handles persisting + applying it — so adding a new toggle is only a few lines.
 
 **Screen shake** — [`CameraShake.gd`](GameFiles/Gameplay%20Scripts/CameraShake.gd) on the player camera is a trauma-based shake (intensity decays over time), triggered via `Refs.shake(amount)` from impacts like the game-over and missile explosions. It shakes the camera *offset* (so it layers on top of the look-ahead `changeSize` sets each frame) and processes even while the tree is paused, so the death shake still plays.
+
+### Replays
+
+Every attempt can be kept and watched back — nothing is shown during gameplay.
+
+**Recording** — the [`Replay`](GameFiles/Gameplay%20Scripts/Replay.gd) autoload starts on the first touch (`gameStarter` calls `Replay.start_run()`), samples the player's position/rotation at 20 Hz in `_physics_process` (so pauses don't record), and logs every drawn line segment as `playerInput` lays it. On game over the finished recording is held in memory and the game-over clapperboard offers a **SAVE REPLAY** button ([`gameOverClipper.gd`](GameFiles/Gameplay%20Scripts/gameOverClipper.gd) builds it in code, so all mode scenes get it); pressing it writes a timestamped `.srp` file to `user://replays/`. Quitting or restarting mid-run discards the recording.
+
+**What's recorded** — everything that happened: the player's movement, every obstacle (with the exact procedural build it had), powerups and stars, every drawn line, and every pickup. The trick that makes obstacles cheap to record is **seed reconstruction**: generators seed the global RNG via `Replay.seed_spawn()` right before instancing and register the node with `Replay.track()`, so a replay stores just *(scene path + seed + spawn/despawn ticks)* and `seed(s) + instantiate()` later rebuilds the identical building/bat-wall/construction site. This is why gameplay scripts must **never call `randomize()`** — the one true `randomize()` lives in `Refs._ready`. Player-dependent movers (homing missiles, the Doppelgänger clone) additionally record per-tick trajectories; drawn lines record the tick they started fading (rolling off a line removes it in playback at the exact same moment); star/powerup/booster pickups are recorded as events; and the HUD powerup state is sampled so reconstructed buildings make the same powerup-spawn decisions the live run saw.
+
+**Watching** — the Settings panel lists the saved replays; picking one opens [`ReplayViewer.tscn`](GameFiles/Sprites/UI/ReplayViewer.tscn) ([`ReplayViewer.gd`](GameFiles/Gameplay%20Scripts/ReplayViewer.gd)). Self-animated obstacles keep their scripts and simply run (pendulums swing, dragons slither, bats and falling lights react to the puppet player, which joins the "Player" group for exactly that reason); missiles and the clone are stripped to visuals and driven along their recorded paths, exploding at their recorded deaths. A stub `indicatorManager` and stand-in `PowerupPopUps` nodes ([`ReplayStubs.gd`](GameFiles/Gameplay%20Scripts/ReplayStubs.gd) + code in the viewer) satisfy the group/name lookups reconstructed obstacles make.
+
+**File format** — a Dictionary written with `store_var` (compact binary): metadata (`version`/`mode`/`character`/`score`/`date`/`sample_every`), packed float arrays (`frames`, `states`, `segments`, `seg_fades`, `events`) and an `entities` array of per-obstacle records. `Replay.load_file()` validates everything and returns `null` for missing/corrupt/incompatible files; writes are atomic like the save files. This is a *state+seed* recording, not an input recording — the game isn't deterministic enough to re-simulate, so replays store what happened.
 
 ### The "Groups" Wiring
 
@@ -249,7 +264,8 @@ A system-by-system index of the scripts under `GameFiles/`. Each file also carri
 
 **Core loop & player**
 - [`Refs.gd`](GameFiles/Gameplay%20Scripts/Refs.gd) — the `Refs` autoload: shared screen/world constants + cached node accessors (incl. `Refs.shake()`).
-- [`Settings.gd`](GameFiles/Gameplay%20Scripts/Settings.gd) — the `Settings` autoload: persisted prefs (music volume, haptics, screen shake, assist-draw), applied to the engine.
+- [`Settings.gd`](GameFiles/Gameplay%20Scripts/Settings.gd) — the `Settings` autoload: persisted prefs (music volume, haptics, screen shake, ghost, assist-draw), applied to the engine.
+- [`Replay.gd`](GameFiles/Gameplay%20Scripts/Replay.gd) + [`ReplayViewer.gd`](GameFiles/Gameplay%20Scripts/ReplayViewer.gd) — the `Replay` autoload records runs (saved to `user://replays/` from the game-over button); the viewer plays saved files back.
 - [`CameraShake.gd`](GameFiles/Gameplay%20Scripts/CameraShake.gd) — trauma-based screen shake on the player camera.
 - [`main.gd`](GameFiles/Gameplay%20Scripts/main.gd) — small standalone helper (hides cursor, F11 fullscreen). *Not currently attached to a scene.*
 - [`player_physics.gd`](GameFiles/Gameplay%20Scripts/player_physics.gd), [`state_machine.gd`](GameFiles/Gameplay%20Scripts/state_machine.gd), [`state.gd`](GameFiles/Gameplay%20Scripts/state.gd), [`States/on_ground.gd`](GameFiles/Gameplay%20Scripts/States/on_ground.gd), [`States/on_air.gd`](GameFiles/Gameplay%20Scripts/States/on_air.gd) — player & physics.

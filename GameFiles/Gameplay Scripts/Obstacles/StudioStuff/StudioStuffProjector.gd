@@ -13,7 +13,6 @@ var mg:float = 88.2        ## Gravity added per physics frame while falling.
 var smokeEmRange:int = 220 ## Horizontal trigger distance (randomised per light).
 
 func _ready() -> void:
-	randomize()
 	dontTroll = randi() % 3
 	smokeEmRange += randi() % 569
 

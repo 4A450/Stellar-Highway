@@ -9,7 +9,6 @@ static var offx:int = 1920  ## Despawn clearance distance used by ObstacleGenera
 
 func _ready() -> void:
 	position.y = 0
-	randomize()
 	get_child(randi() % 3).queue_free()
 	if randi() % 2:
 		get_child(randi() % 2).queue_free()

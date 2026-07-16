@@ -12,6 +12,8 @@ extends Control
 @onready var haptics: CheckButton = $Center/VBox/Haptics
 @onready var shake: CheckButton = $Center/VBox/Shake
 @onready var assist: HSlider = $Center/VBox/AssistSlider
+@onready var replay_list: ItemList = $Center/VBox/ReplayList
+@onready var watch_btn: Button = $Center/VBox/WatchBTN
 
 func _ready() -> void:
 	# Seed the controls from the saved settings...
@@ -24,3 +26,13 @@ func _ready() -> void:
 	haptics.toggled.connect(func(on): Settings.set_value("haptics_on", on))
 	shake.toggled.connect(func(on): Settings.set_value("shake_on", on))
 	assist.value_changed.connect(func(v): Settings.set_value("draw_offset", v))
+	# The saved-replays browser: pick a file, watch it in the replay viewer.
+	for f in Replay.list_replays():
+		replay_list.add_item(f)
+	watch_btn.pressed.connect(_on_watch_pressed)
+
+func _on_watch_pressed() -> void:
+	var sel: PackedInt32Array = replay_list.get_selected_items()
+	if sel.is_empty():
+		return
+	Replay.watch(replay_list.get_item_text(sel[0]))

@@ -32,7 +32,6 @@ var d_ch:float       ## Per-sample change in deviance (the drift rate).
 var temp             ## Scratch reused in f() and when wiring the wall colliders.
 
 func _ready() -> void:
-	randomize()
 	mxSize = 32 + randi() % 33
 	fx = randi() % 8
 	match fx:

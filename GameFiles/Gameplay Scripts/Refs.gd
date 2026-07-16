@@ -21,6 +21,13 @@ const SCREEN_HEIGHT := 1080.0  ## Design viewport height (fixed; the X axis is w
 const DESIGN_ASPECT := SCREEN_WIDTH / SCREEN_HEIGHT  ## 16:9; the reference aspect ratio.
 const KILL_Y := 1620.0         ## Y below which a body has fallen off-screen and dies / despawns.
 
+## Seeds the global RNG once for the whole game. Individual scripts must NOT call
+## randomize() themselves: the replay system reproduces procedural obstacles by seeding
+## the global RNG right before each spawn (see Replay.seed_spawn), and a stray
+## randomize() in a _ready would destroy that seed.
+func _ready() -> void:
+	randomize()
+
 # Cached node references, re-resolved automatically when they become invalid (scene change).
 var _player: Node
 var _playfield: Node

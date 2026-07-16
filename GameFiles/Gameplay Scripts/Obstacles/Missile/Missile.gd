@@ -21,7 +21,6 @@ func _ready() -> void:
 	add_to_group("GMissiles")
 	if anim:
 		add_to_group("Missiles")
-		randomize()
 		if randi()%2 == 1:
 			anim.play("fire_R")
 		else:

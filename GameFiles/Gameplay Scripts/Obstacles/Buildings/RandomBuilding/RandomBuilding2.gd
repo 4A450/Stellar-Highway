@@ -37,7 +37,6 @@ var d_ch:float
 var temp
 
 func _ready() -> void:
-	randomize()
 	mxSize = 32 + randi() % 32
 	mxSize += int(not(bool(mxSize%2)))
 	fx = randi() % 4

@@ -8,9 +8,6 @@ var imposter:Resource = preload("res://GameFiles/Sprites/PlayerSUS.tscn")
 var timeman:float = 0.0       ## Time accumulator between spawns.
 var da_sus:CharacterBody2D    ## The most recently spawned clone.
 
-func _ready() -> void:
-	randomize()
-
 func _process(delta:float) -> void:
 	timeman += delta
 	if timeman > 2:

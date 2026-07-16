@@ -13,6 +13,7 @@ func _on_hitbox_body_entered(body:Node) -> void:
 	if body.name == "Player" and not sus:
 		sus = true
 		Settings.vibrate(30)
+		Replay.record_event(Replay.EV_POWERUP, global_position)
 		body.spdOffset = 400
 		body.TOPROLL += 3 * body.spdOffset
 		get_tree().get_nodes_in_group("PowerupPopUps")[0].text = "JETPACK"

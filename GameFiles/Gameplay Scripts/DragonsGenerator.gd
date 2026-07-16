@@ -12,9 +12,6 @@ var ready2spawn:bool = true
 
 var dragons_info:Array[int] = [400, 760]  ## The two Y rows the dragons fly along.
 
-func _ready() -> void:
-	randomize()
-
 ## Spawn a pair of menu dragons; respawn once the previous ones have flown off.
 func _process(_delta:float) -> void:
 	if ready2spawn:

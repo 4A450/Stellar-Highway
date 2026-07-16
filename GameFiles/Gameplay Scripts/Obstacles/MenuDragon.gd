@@ -25,7 +25,6 @@ var sin_step:float = 0.2
 @onready var parent:Node2D = get_node("../")
 
 func _ready() -> void:
-	randomize()
 	mxSize = 32 + randi() % 97
 	verticality = 64 + randi() % 65
 	headPump = verticality / 128.0

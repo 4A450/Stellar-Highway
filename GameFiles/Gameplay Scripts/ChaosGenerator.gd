@@ -66,7 +66,6 @@ var why:Array[int] = [64, 64, -64, -64]        ## Small per-slot x nudges for mi
 var rockets_info:Array[Vector2] = [Vector2(0.8, 900), Vector2(0.8, 180), Vector2(-0.4, 900), Vector2(-0.4, 180)]
 
 func _ready() -> void:
-	randomize()
 	player.position.y = get_node("../Building1").position.y - 321
 	get_node("../../UI/Center/Loading").loadEnd()
 	startX = player.position.x
@@ -96,12 +95,16 @@ func _fill_ground() -> void:
 	var horizon:float = player.position.x + screen_w() * 1.6
 	while frontier < horizon and live.size() < MAX_GROUND:
 		var idx:int = groundPick[randi() % groundPick.size()]
+		var s:int = Replay.seed_spawn()
 		var obj:Node2D = groundObjs[idx].instantiate()
+		var props:Dictionary = {}
 		if idx == 5: # UnderConstruction: cap at 2 pendulum sections (3-4 are unfair in chaos)
 			obj.max_sets = 2
+			props["max_sets"] = 2
 		var gap:float = screen_w() * lerpf(GAP_START, GAP_END, chaos_t())
 		obj.position.x = frontier + gap + obj.offx
 		parent.add_child(obj)
+		Replay.track(obj, s, props)
 		frontier = obj.position.x + obj.offx  # offx may be recomputed in the obstacle's _ready
 		live.push_back(obj)
 
@@ -149,9 +152,11 @@ func _missiles_alive() -> int:
 
 ## Places one self-managing obstacle just past the right edge (the endless mode's formula).
 func _spawn_simple(res:Resource) -> Node:
+	var s:int = Replay.seed_spawn()
 	var obj:Node2D = res.instantiate()
 	obj.position.x = player.position.x + obj.offx + screen_w() * 0.8
 	parent.add_child(obj)
+	Replay.track(obj, s)
 	live.push_back(obj)
 	return obj
 
@@ -163,12 +168,15 @@ func _spawn_dragons() -> void:
 		nums += randi() % 2
 	var offset:int = randi() % 3
 	for i in range(nums):
+		var row:int = (i + offset) % 3
+		var y_jitter:int = randi() % 160  # drawn before seed_spawn so it can't shift the seeded stream
+		var s:int = Replay.seed_spawn()
 		var obj:Node2D = Dragon.instantiate()
 		obj.position.x = player.position.x + 1.5 * screen_w()
-		var row:int = (i + offset) % 3
-		obj.position.y = dragons_info[row] + randi() % 160
+		obj.position.y = dragons_info[row] + y_jitter
 		obj.offx = 1.4 * screen_w()
 		parent.add_child(obj)
+		Replay.track(obj, s)
 		indMan.indicateDragons(row, obj)
 
 ## A volley of 1-4 missiles (more as chaos ramps) from ahead and behind, plus the beeping
@@ -178,21 +186,25 @@ func _spawn_missiles(res:Resource, mark:Resource, mark_name:String) -> void:
 	nums = mini(nums, 4)
 	var offset:int = randi() % (5 - nums)
 	for i in range(nums):
+		var s:int = Replay.seed_spawn()
 		var obj:CharacterBody2D = res.instantiate()
 		obj.position.x = player.position.x + why[i + offset] + screen_w() * rockets_info[i + offset].x
 		obj.position.y = rockets_info[i + offset].y
 		parent.add_child(obj)
+		Replay.track(obj, s)
 	if not get_node_or_null("../" + mark_name):
 		parent.add_child(mark.instantiate())
 
 ## A late-game bat wall sweeping in from the right — always a single column, since
 ## everything else is still spawning around it.
 func _spawn_batwall() -> void:
+	var s:int = Replay.seed_spawn()
 	var wall:Node2D = BatWall.instantiate()
 	wall.max_walls = 1
 	wall.position.x = player.position.x + 64 + screen_w() * 0.8
 	wall.wall_dist = 1920 - int(500 * chaos_t())
 	wall.difficulty = 1.0 + chaos_t()
 	parent.add_child(wall)
+	Replay.track(wall, s, {"max_walls": 1, "wall_dist": wall.wall_dist, "difficulty": wall.difficulty})
 	live.push_back(wall)
 	batwall_alive = wall

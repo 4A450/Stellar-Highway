@@ -11,7 +11,6 @@ var throw:Vector2            ## The random launch velocity given to the pad when
 var gravity:float = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 func _ready() -> void:
-	randomize()
 	throw = Vector2(randf_range(256, 1024), randf_range(-256, -1024))
 	if randi() % 2:
 		throw.x *= -1
@@ -30,6 +29,7 @@ func _physics_process(delta:float) -> void:
 ## the pad away.
 func _on_detector_body_entered(body:Node) -> void:
 	if body.name == "Player":
+		Replay.record_event(Replay.EV_BOOSTER, global_position)
 		get_node("Detector").queue_free()
 		if body.is_grounded:
 			body.gsp += 400

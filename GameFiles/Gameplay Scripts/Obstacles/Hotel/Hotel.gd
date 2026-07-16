@@ -16,7 +16,6 @@ var SmW:Resource = preload("res://GameFiles/Sprites/Obstacles/Hotel/Obstacles/Sm
 
 func _ready() -> void:
 	position.y = 540
-	randomize()
 	rngMan = randi() % 3
 	for i in range(3):
 		get_child(i).position.y = (rngMan - 1) * 360

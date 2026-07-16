@@ -7,7 +7,6 @@ extends StaticBody2D
 static var offx:int = 158  ## Despawn clearance distance used by ObstacleGenerator.
 
 func _ready() -> void:
-	randomize()
 	position.y = 711 + randi() % 250
 	# Keep the speed-boost pad only half the time, for variety.
 	if get_node_or_null("SpeedBooster"):

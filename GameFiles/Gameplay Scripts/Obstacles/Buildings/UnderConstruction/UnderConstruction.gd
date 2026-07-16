@@ -14,7 +14,6 @@ var building:Array = [null, null]  ## Scratch: [pendulum, tower] for the section
 var morePlz:int = 1  ## How many construction sections to spawn (1 to max_sets).
 
 func _ready() -> void:
-	randomize()
 	position.y = 540
 	morePlz = 1 + randi() % max_sets
 	offx += (morePlz - 1) * 1024

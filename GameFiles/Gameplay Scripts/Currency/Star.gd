@@ -11,6 +11,7 @@ func _on_kill_me_body_entered(body:Node) -> void:
 		if (body.name == "Player" or body.name == "PlayerSUS") and not sus:
 			body.playStarSound()
 			sus = true
+			Replay.record_event(Replay.EV_STAR, global_position)
 			get_tree().get_first_node_in_group("StarCnt").stars += 1
 			if body.get_node_or_null("Lowrider"):
 				get_tree().get_first_node_in_group("Score").extra += 100

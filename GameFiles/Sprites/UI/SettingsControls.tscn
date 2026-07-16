@@ -57,3 +57,17 @@ custom_minimum_size = Vector2(440, 24)
 layout_mode = 2
 max_value = 200.0
 step = 10.0
+
+[node name="ReplaysLabel" type="Label" parent="Center/VBox"]
+layout_mode = 2
+mouse_filter = 2
+text = "SAVED REPLAYS"
+horizontal_alignment = 1
+
+[node name="ReplayList" type="ItemList" parent="Center/VBox"]
+custom_minimum_size = Vector2(440, 140)
+layout_mode = 2
+
+[node name="WatchBTN" type="Button" parent="Center/VBox"]
+layout_mode = 2
+text = "WATCH SELECTED REPLAY"

@@ -20,7 +20,7 @@ By contributing, you agree your changes are licensed under the project's **GPLv3
 The [README](README.md#architecture-overview) has the full architecture tour — read it first. The short version:
 
 - **One script per node.** Scripts in `GameFiles/Gameplay Scripts/` are attached to nodes in scenes under `GameFiles/Sprites/` (and the three `GameFiles/Modes/` scenes).
-- **Two autoloads:** [`Refs`](GameFiles/Gameplay%20Scripts/Refs.gd) (shared constants + cached node lookups + `Refs.shake()`) and [`Settings`](GameFiles/Gameplay%20Scripts/Settings.gd) (persisted prefs).
+- **Three autoloads:** [`Refs`](GameFiles/Gameplay%20Scripts/Refs.gd) (shared constants + cached node lookups + `Refs.shake()`), [`Settings`](GameFiles/Gameplay%20Scripts/Settings.gd) (persisted prefs) and [`Replay`](GameFiles/Gameplay%20Scripts/Replay.gd) (run recording; save from the game-over screen, watch via the Settings panel).
 - **Objects find each other via Godot groups** (see the README's "Groups" table), not hard references.
 - The world is sized at a fixed **1080 px height**; spawners offset by `true_scalex / true_scaley` (from the `Playfield`/`sizeChange` node) so things appear just off the right edge on any aspect ratio.
 
@@ -29,10 +29,10 @@ The [README](README.md#architecture-overview) has the full architecture tour —
 ## How to add content
 
 ### A new obstacle
-1. Make a scene in `GameFiles/Sprites/Obstacles/…` and a script in `GameFiles/Gameplay Scripts/Obstacles/…`. Use an existing simple one as a template — [`Airships.gd`](GameFiles/Gameplay%20Scripts/Obstacles/Airships.gd) or a [`Building`](GameFiles/Gameplay%20Scripts/Obstacles/Buildings/Building1.gd) are good starts.
+1. Make a scene in `GameFiles/Sprites/Obstacles/…` and a script in `GameFiles/Gameplay Scripts/Obstacles/…`. Use an existing simple one as a template — [`Airships.gd`](GameFiles/Gameplay%20Scripts/Obstacles/Airships.gd) or a [`Building`](GameFiles/Gameplay%20Scripts/Obstacles/Buildings/Building1.gd) are good starts. **Do not call `randomize()`** — the global RNG is seeded once at boot (`Refs._ready`), and the replay system reproduces your obstacle from the seed the generator sets right before spawning it (a stray `randomize()` would break replays of your obstacle).
 2. Expose an **`offx`** value — how far past its own origin the player must travel before it's safe to despawn. The generators use it to recycle.
 3. Make deadly sides kill the player with an `Area2D` that calls `body.tartar_sauce()` (see [`killPlayer.gd`](GameFiles/Gameplay%20Scripts/killPlayer.gd)), and lay [`Star`](GameFiles/Sprites/Currency/Star.tscn) instances along the *safe* path (players follow the stars).
-4. Register it in [`ObstacleGenerator.gd`](GameFiles/Gameplay%20Scripts/ObstacleGenerator.gd): add the scene to the `objs` array and include its index in the simple-spawn `match` arms. (Obstacles higher in the list appear later, as the spawn pool grows with distance.)
+4. Register it in [`ObstacleGenerator.gd`](GameFiles/Gameplay%20Scripts/ObstacleGenerator.gd): add the scene to the `objs` array and include its index in the simple-spawn `match` arms. (Obstacles higher in the list appear later, as the spawn pool grows with distance.) Follow the spawn pattern you'll see there: `var s := Replay.seed_spawn()` before `instantiate()`, and `Replay.track(obj, s)` after `add_child()` — that's what makes the obstacle appear in saved replays.
 5. Consider Chaos mode too: ground-based obstacles join [`ChaosGenerator.gd`](GameFiles/Gameplay%20Scripts/ChaosGenerator.gd)'s `groundObjs` + `groundPick` (repeats in `groundPick` = higher spawn weight); flying/special ones join its `_air_event` pool. If your obstacle would be unfair at full chaos, give it a cap variable the generator sets before `add_child` — see `BatWall.max_walls` (single column in Chaos) and `UnderConstruction.max_sets` (max 2 pendulum sections) for the pattern. One caveat: if its warning indicator finds it by node name (like Airships'), Chaos must keep it one-at-a-time — see the `airships_alive`-style guards.
 6. Optionally add a heads-up warning via [`indicatorManager.gd`](GameFiles/Gameplay%20Scripts/Indicators/indicatorManager.gd).
 

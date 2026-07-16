@@ -8,7 +8,6 @@ static var offx:int = 1024  ## Despawn clearance distance used by ObstacleGenera
 
 func _ready() -> void:
 	position.y = 540
-	randomize()
 	# Tilt the bars left or right by a random angle near horizontal.
 	if randi() % 2:
 		get_node("Bars").rotation = randf_range(PI - 0.28, PI - 0.028)

@@ -20,7 +20,6 @@ var Star:Resource = preload("res://GameFiles/Sprites/Currency/Star.tscn")
 var wb:Node2D             ## Scratch: each bat or star being placed.
 
 func _ready() -> void:
-	randomize()
 	walls = randi() % max_walls + 1
 	offx = (walls - 1) * wall_dist + 1024
 	for i in range(walls):

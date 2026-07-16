@@ -86,9 +86,10 @@ func _commit_point(p_new:Vector2) -> void:
 	for i in range(1, SMOOTH_SUBDIVISIONS + 1):
 		var t:float = float(i) / SMOOTH_SUBDIVISIONS
 		var pt:Vector2 = _quad_bezier(start, ctrl, end, t)
-		var seg:StaticBody2D = _emit_segment(prev_pt, pt)
+		var has_star:bool = place_star and i == SMOOTH_SUBDIVISIONS
+		var seg:StaticBody2D = _emit_segment(prev_pt, pt, has_star)
 		# Put the (optional) star on the last piece of this chord.
-		if place_star and i == SMOOTH_SUBDIVISIONS:
+		if has_star:
 			stTemp = Star.instantiate()
 			seg.add_child(stTemp)
 		prev_pt = pt
@@ -97,7 +98,8 @@ func _commit_point(p_new:Vector2) -> void:
 	switch = not switch
 
 ## Instantiates one CollLine segment from world point [param a] to [param b] and returns it.
-func _emit_segment(a:Vector2, b:Vector2) -> StaticBody2D:
+## [param star] marks a Rockstar star riding this piece (recorded so replays show it too).
+func _emit_segment(a:Vector2, b:Vector2, star:bool = false) -> StaticBody2D:
 	lineTemp = Line.instantiate()
 	lineTemp.position = a
 	add_child(lineTemp)
@@ -108,6 +110,7 @@ func _emit_segment(a:Vector2, b:Vector2) -> StaticBody2D:
 	shape.b = b - a
 	lineTemp.get_node("CollisionShape2D").shape = shape
 	lineTemp.get_node("Area2D").get_node("CollisionShape2D").shape = shape
+	lineTemp.replay_id = Replay.record_segment(a, b, star)
 	return lineTemp
 
 ## A point on the quadratic Bézier defined by [param p0], [param p1] (control) and [param p2].

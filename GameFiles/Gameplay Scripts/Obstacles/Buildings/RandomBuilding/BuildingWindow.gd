@@ -16,5 +16,4 @@ static var ScrewConstantStrings:Array[Resource] = [
 	]
 
 func _ready() -> void:
-	randomize()
 	texture = ScrewConstantStrings[max(0, (randi() % 11) - 4)]

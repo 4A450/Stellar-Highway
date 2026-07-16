@@ -25,7 +25,6 @@ var MissileMark:Resource = preload("res://GameFiles/Sprites/Obstacles/MissileMar
 var TMissileMark:Resource = preload("res://GameFiles/Sprites/Obstacles/TMissileMark.tscn")
 
 func _ready() -> void:
-	randomize()
 	player.position.y = get_node("../Building1").position.y - 321
 
 ## The endless wave loop. Started by gameStarter.gd on the first touch and never
@@ -56,7 +55,9 @@ func start() -> void:
 				else:
 					obj.position.x = -(player.position.x + 64 + 1920 * parent.true_scalex/parent.true_scaley * 0.5)
 				obj.position.y = randf_range(-1144, 1144)
+			var s:int = Replay.seed_spawn()  # after the position rolls, right before _ready runs
 			parent.add_child(obj)
+			Replay.track(obj, s)
 		if ms and not get_node_or_null("../MissileMark"):
 			parent.add_child(MissileMark.instantiate())
 		if tms and not get_node_or_null("../TMissileMark"):

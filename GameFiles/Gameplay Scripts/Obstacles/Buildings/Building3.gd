@@ -14,7 +14,6 @@ var Lowrider:Resource = preload("res://GameFiles/Sprites/Powerups/Lowrider.tscn"
 var Powerup:Node2D
 
 func _ready() -> void:
-	randomize()
 	position.y = 691 + randi() % 241 
 	if randi() % 2:
 		get_node("LightProjector").queue_free()

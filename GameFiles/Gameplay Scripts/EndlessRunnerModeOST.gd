@@ -12,7 +12,9 @@ var bg_music := AudioStreamPlayer.new()
 func _ready() -> void:
 	get_tree().set_auto_accept_quit(false)
 	get_tree().set_quit_on_go_back(false)
-	randomize()
+	# Start the replay recording with the scene (before any obstacle spawns), not at the first
+	# touch — the generators pre-fill the world while the "tap to begin" prompt is still up.
+	Replay.start_run()
 	await get_tree().create_timer(1).timeout
 	# Pick one of three gameplay tracks at random.
 	var rand:int = randi() % 3

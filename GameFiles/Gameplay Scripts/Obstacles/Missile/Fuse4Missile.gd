@@ -10,7 +10,6 @@ var rt:float         ## Seconds between burning each segment (randomised per mis
 @onready var fusePars:CPUParticles2D = get_node("../../FusePars")  ## The spark particles at the tip.
 
 func _ready() -> void:
-	randomize()
 	rt = randf_range(0.133, 0.175)
 	for i in range(30):
 		pnts.push_back(Vector2(i*1.5, 0))

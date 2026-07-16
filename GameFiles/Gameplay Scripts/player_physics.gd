@@ -338,6 +338,7 @@ func doTheGameoverThing() -> void:
 	var finalScore:int = get_tree().get_first_node_in_group("Score").sc
 	finalScore += get_tree().get_first_node_in_group("Score").of
 	Utils.saveScore(finalScore, gamemode)
+	Replay.stop(finalScore)
 	get_tree().get_first_node_in_group("clipperBoy").myCondolences()
 
 ## Plays the star-pickup chime (called by stars when collected).

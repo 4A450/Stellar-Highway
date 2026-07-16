@@ -6,6 +6,7 @@ extends StaticBody2D
 
 var disTime:float = 3.0  ## Seconds left before this segment auto-deletes.
 var sus:bool = true      ## Guard so the fade-out is only triggered once.
+var replay_id:int = -1   ## This segment's index in the replay recording (set by playerInput).
 
 func _ready() -> void:
 	# The scene wires up body_exited (for the fade); we also light the segment up on enter.
@@ -36,6 +37,7 @@ func _on_area_2d_body_exited(body):
 
 ## Tween the segment to transparent, then free it (reclaiming memory).
 func killMe4FreeRAM():
+	Replay.record_segment_fade(replay_id)  # so replays remove this piece at the same moment
 	var tween:Tween = get_tree().create_tween()
 	tween.tween_property(self, "modulate:a", 0, 0.3)
 	tween.tween_callback(queue_free)

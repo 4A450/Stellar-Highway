@@ -8,7 +8,6 @@ extends Node2D
 static var offx:int = 348  ## Despawn clearance distance used by ObstacleGenerator.
 
 func _ready() -> void:
-	randomize()
 	if get_node("../../").name != "MainMenu":
 		position.y = 475 + randi() % 76
 	# Keep one of the two blade sets, drop the other.
