@@ -641,7 +641,7 @@ func _glow_touched_lines() -> void:
 		if puppet.position.distance_to(closest) <= TOUCH_GLOW_DIST:
 			entry["glowed"] = true
 			var ln: Line2D = entry["node"]
-			ln.default_color = ln.default_color.lerp(Color.WHITE, 0.6)
+			ln.default_color = ln.default_color.lerp(Color.WHITE, 0.75)
 			var tw := ln.create_tween()
 			tw.tween_property(ln, "width", ln.width * 1.8, 0.08)
 

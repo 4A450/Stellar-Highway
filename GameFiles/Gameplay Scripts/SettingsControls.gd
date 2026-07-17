@@ -1,20 +1,21 @@
 extends Control
 ## The interactive controls inside the main-menu Settings panel.
 ##
-## A functional, deliberately-plain set of controls (music volume, haptics, assist draw) wired to
-## the [code]Settings[/code] autoload. It's instanced into the Settings popup by settingsMenu.gd.
-## Restyle/reposition the nodes in SettingsControls.tscn to taste — the wiring here keys off node
-## names, so moving them around in the editor is safe.
+## A functional, deliberately-plain set of controls wired to the [code]Settings[/code] autoload,
+## laid out in two columns: the settings (music volume, haptics, screen shake, assist draw) on the
+## left, the saved-replays browser on the right. It's instanced into the Settings popup by
+## settingsMenu.gd. Restyle/reposition the nodes in SettingsControls.tscn to taste — update the
+## @onready paths below if you rename or reparent them.
 ##
 ## Its process_mode is ALWAYS (set in the scene) so the controls still work while the menu is paused.
 
-@onready var music: HSlider = $Center/VBox/MusicSlider
-@onready var haptics: CheckButton = $Center/VBox/Haptics
-@onready var shake: CheckButton = $Center/VBox/Shake
-@onready var assist: HSlider = $Center/VBox/AssistSlider
-@onready var replay_list: ItemList = $Center/VBox/ReplayList
-@onready var watch_btn: Button = $Center/VBox/WatchBTN
-@onready var folder_btn: Button = $Center/VBox/FolderBTN
+@onready var music: HSlider = $Center/Columns/SettingsCol/MusicSlider
+@onready var haptics: CheckButton = $Center/Columns/SettingsCol/Haptics
+@onready var shake: CheckButton = $Center/Columns/SettingsCol/Shake
+@onready var assist: HSlider = $Center/Columns/SettingsCol/AssistSlider
+@onready var replay_list: ItemList = $Center/Columns/ReplaysCol/ReplayList
+@onready var watch_btn: Button = $Center/Columns/ReplaysCol/WatchBTN
+@onready var folder_btn: Button = $Center/Columns/ReplaysCol/FolderBTN
 
 func _ready() -> void:
 	# Seed the controls from the saved settings...
