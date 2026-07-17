@@ -57,6 +57,7 @@ func _on_kill_me_body_entered(body:Node) -> void:
 func gg() -> void:
 	get_node("ExpSound").play()
 	Refs.shake(0.35)
+	Replay.mark_explosion(self)
 	pleaseStopHesAlreadyDead = true
 	velocity = Vector2(0, 0)
 	remove_from_group("GMissiles")
@@ -72,6 +73,7 @@ func gg() -> void:
 func gg1() -> void:
 	get_node("ExpSound").play()
 	Refs.shake(0.5)
+	Replay.mark_explosion(self)
 	pleaseStopHesAlreadyDead = true
 	velocity = Vector2(0, 0)
 	remove_from_group("GMissiles")

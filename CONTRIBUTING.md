@@ -44,6 +44,27 @@ The [README](README.md#architecture-overview) has the full architecture tour —
 ### A new character
 Characters are sprites under the player's `Characters` node, selected by index in [`player_physics.gd`](GameFiles/Gameplay%20Scripts/player_physics.gd) `_ready()` and priced in [`characterSelector.gd`](GameFiles/Gameplay%20Scripts/characterSelector.gd).
 
+### Keeping replays working
+
+Every run is recorded by the [`Replay`](GameFiles/Gameplay%20Scripts/Replay.gd) autoload and can be played back by [`ReplayViewer.gd`](GameFiles/Gameplay%20Scripts/ReplayViewer.gd) (see the README's *Replays* section for the architecture). Playback rebuilds obstacles by re-running their construction from a recorded RNG seed, which puts a few rules on new content:
+
+1. **Never call `randomize()` in a gameplay script.** The global RNG is seeded once at startup (`Refs._ready`). A stray `randomize()` breaks seed-reconstruction, and replays of runs containing your obstacle will build it differently than the player saw it.
+2. **Register generator spawns.** Right before instancing, grab a seed; after configuring, track the node:
+   ```gdscript
+   var s: int = Replay.seed_spawn()   # seeds the RNG *and* returns the seed
+   var obj = MyObstacle.instantiate()
+   obj.some_knob = 3                  # anything you set that affects its look/motion...
+   parent.add_child(obj)
+   Replay.track(obj, s, {"some_knob": 3})   # ...goes into props so playback sets it too
+   ```
+   Entities whose movement depends on the player (homing things) should be tracked with `force_stream = true` so their trajectory is recorded instead of simulated.
+3. **Delayed deaths need their visual moment stamped.** If your obstacle explodes but frees itself later (like missiles), call `Replay.mark_explosion(self)` when the blast *starts*, or the replayed explosion will run late.
+4. **New pickups** must call `Replay.record_event(...)` in their pickup handler; if the powerup rides on the player, add its scene + carry offset to the `CARRY` table in `ReplayViewer.gd`.
+5. **New group/name lookups** made by obstacles at spawn must also resolve in the replay viewer's world: it hosts the real `indicatorManager`, a puppet named `Player` (in the "Player" group), a "SpeedLine"-group trail, and a World parent with `true_scalex`/`true_scaley` ([`ReplayWorld.gd`](GameFiles/Gameplay%20Scripts/ReplayWorld.gd)). If your obstacle reaches for something new, extend `ReplayViewer._ready` accordingly.
+6. **Changing the file format** (new arrays, changed meanings) requires bumping `Replay.FILE_VERSION` — old files are then cleanly ignored instead of misread. Purely additive, optional keys (read with `.get(key, fallback)`) don't need a bump.
+
+**Test it:** save a replay of a run featuring your content (game-over → SAVE REPLAY) and watch it back via Settings → SAVED REPLAYS. The reconstruction should match what you just played.
+
 ---
 
 ## Conventions
