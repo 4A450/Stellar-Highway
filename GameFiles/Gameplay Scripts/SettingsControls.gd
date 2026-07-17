@@ -14,6 +14,7 @@ extends Control
 @onready var assist: HSlider = $Center/VBox/AssistSlider
 @onready var replay_list: ItemList = $Center/VBox/ReplayList
 @onready var watch_btn: Button = $Center/VBox/WatchBTN
+@onready var folder_btn: Button = $Center/VBox/FolderBTN
 
 func _ready() -> void:
 	# Seed the controls from the saved settings...
@@ -30,9 +31,16 @@ func _ready() -> void:
 	for f in Replay.list_replays():
 		replay_list.add_item(f)
 	watch_btn.pressed.connect(_on_watch_pressed)
+	folder_btn.pressed.connect(_on_folder_pressed)
 
 func _on_watch_pressed() -> void:
 	var sel: PackedInt32Array = replay_list.get_selected_items()
 	if sel.is_empty():
 		return
 	Replay.watch(replay_list.get_item_text(sel[0]))
+
+## Opens the replays directory in the system file manager (so replays can be backed up,
+## shared, or dropped in from someone else). Desktop-oriented; Android file managers may
+## not answer the request, in which case nothing happens.
+func _on_folder_pressed() -> void:
+	OS.shell_open("file://" + ProjectSettings.globalize_path(Replay.DIR))

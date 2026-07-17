@@ -18,9 +18,11 @@ extends Node
 ##   fading — so lines vanish in playback exactly when the ball rolled off them;
 ## [br]• pickup [b]events[/b]: star collections, powerup grabs, speed-booster hits.
 ##
-## On game over, player_physics calls [method stop]: the recording is held in memory and the
-## game-over screen offers SAVE REPLAY (gameOverClipper.gd) → [method save_pending] writes a
-## timestamped file to [constant DIR] (atomic, like the saves). Quitting mid-run discards it.
+## On game over, player_physics calls [method stop]: the recording is auto-saved as the
+## rolling [b]last replay[/b] ([code]last.srp[/code], overwritten every run) and held in
+## memory, and the game-over screen offers SAVE REPLAY (gameOverClipper.gd) →
+## [method save_pending] writes a permanent timestamped file to [constant DIR] (atomic,
+## like the saves). Quitting mid-run discards the recording.
 ##
 ## [b]Watching[/b] — the Settings panel lists [method list_replays]; [method watch] opens
 ## ReplayViewer.tscn, which rebuilds the run: seed-reconstructed obstacles, streamed missiles,
@@ -214,6 +216,7 @@ func stop(score: int) -> void:
 		"events": _events,
 		"entities": entities,
 	}
+	_store(DIR + "/last.srp", _pending)  # every run survives as the rolling "last replay"
 
 ## Whether there's a finished recording waiting to be saved (drives the game-over button).
 func has_pending() -> bool:
@@ -229,17 +232,24 @@ func save_pending() -> bool:
 	_pending = null
 	return true
 
-## The saved replay filenames, newest first.
+## The saved replay filenames: the rolling last replay first, then the rest newest-first.
+## Only files the current format can actually play are listed — stale files from older
+## versions (e.g. the pre-release ghost prototype's last_m*/best_m* files) would just
+## bounce the viewer back to the menu, so they're hidden.
 func list_replays() -> PackedStringArray:
 	var names := PackedStringArray()
 	var dir := DirAccess.open(DIR)
 	if dir == null:
 		return names
 	for f in dir.get_files():
-		if f.ends_with(".srp"):
+		if f.ends_with(".srp") and load_file(DIR + "/" + f) != null:
 			names.append(f)
 	names.sort()
 	names.reverse()
+	var li := names.find("last.srp")
+	if li > 0:  # the freshest run always sits at the top of the browser
+		names.remove_at(li)
+		names.insert(0, "last.srp")
 	return names
 
 ## Opens the replay viewer on [param file_name] (a name from [method list_replays]).

@@ -54,3 +54,7 @@ func _on_tut_btn_pressed() -> void:
 func _on_settings_btn_pressed() -> void:
 	get_node("../../Center/Settings").visible = true
 	get_tree().paused = true
+
+func _on_credits_btn_pressed() -> void:
+	get_node("../../Center/Credits").visible = true
+	get_tree().paused = true

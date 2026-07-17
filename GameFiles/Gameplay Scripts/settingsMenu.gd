@@ -1,17 +1,22 @@
 extends Control
-## The main-menu settings popup. Opened from the shop view; Esc or its close button
-## dismisses it. Keeps its dimming overlay sized to the current aspect ratio.
+## A dimmed main-menu popup page — used by both the Settings and the Credits panels.
+## Esc or the close button dismisses it. Keeps its dimming overlay sized to the aspect ratio.
+
+## Whether to build the interactive settings controls into this popup. The Settings panel
+## turns this on; the Credits panel is just the static page, so it leaves it off.
+@export var show_controls := true
 
 @onready var shady:Sprite2D = get_node("ShadyBusiness")  ## The dimming overlay behind the panel.
 
-## The interactive controls (music/haptics/assist-draw), built as their own scene so they're easy
-## to restyle in the editor. Added here so they live and hide together with this popup.
+## The interactive controls (music/haptics/assist-draw/replays), built as their own scene so
+## they're easy to restyle in the editor. Added here so they live and hide with this popup.
 var Controls:Resource = preload("res://GameFiles/Sprites/UI/SettingsControls.tscn")
 
 func _ready() -> void:
 	visible = false
 	set_process_input(true)
-	add_child(Controls.instantiate())
+	if show_controls:
+		add_child(Controls.instantiate())
 
 func _process(_delta:float) -> void:
 	var pf:Node = Refs.playfield()

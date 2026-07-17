@@ -1226,6 +1226,25 @@ texture = ExtResource("70_wd5pq")
 libraries/ = SubResource("AnimationLibrary_5jagf")
 speed_scale = 8.0
 
+[node name="creditsBTN" type="Button" parent="UI/TopRight" unique_id=513457162]
+layout_mode = 0
+offset_left = -161.0
+offset_top = 351.0
+offset_right = -54.0
+offset_bottom = 432.0
+focus_mode = 0
+icon = ExtResource("69_g7ge2")
+flat = true
+
+[node name="CLabel" type="Label" parent="UI/TopRight/creditsBTN" unique_id=215143487]
+layout_mode = 0
+offset_left = 34.0
+offset_top = 18.0
+offset_right = 74.0
+offset_bottom = 62.0
+theme_override_font_sizes/font_size = 36
+text = "C"
+
 [node name="LeftCenter" type="Control" parent="UI" unique_id=347689947]
 layout_mode = 3
 anchors_preset = 2
@@ -1419,7 +1438,58 @@ texture = ExtResource("73_5vaig")
 [node name="PageBg" type="Sprite2D" parent="UI/Center/Settings" unique_id=1565739576]
 texture = ExtResource("75_porer")
 
-[node name="readnLearn" type="RichTextLabel" parent="UI/Center/Settings/PageBg" unique_id=187697181]
+[node name="pageNum" type="Label" parent="UI/Center/Settings/PageBg" unique_id=682505063]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1450.0
+offset_top = -887.0
+offset_right = -1212.0
+offset_bottom = -855.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.6, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.92549, 0.278431, 0.12549, 1)
+theme_override_constants/shadow_offset_x = -2
+theme_override_constants/shadow_offset_y = 0
+theme_override_fonts/font = SubResource("FontVariation_kt56a")
+theme_override_font_sizes/font_size = 28
+text = "SETTINGS:"
+
+[node name="closeBTN" type="Button" parent="UI/Center/Settings/PageBg" unique_id=1439793386]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -332.0
+offset_top = -922.0
+offset_right = -267.0
+offset_bottom = -857.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+icon = ExtResource("78_tanab")
+flat = true
+
+[node name="Credits" type="Control" parent="UI/Center" unique_id=1903325801]
+process_mode = 2
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("81_i12mq")
+show_controls = false
+
+[node name="ShadyBusiness" type="Sprite2D" parent="UI/Center/Credits" unique_id=626388320]
+texture = ExtResource("73_5vaig")
+
+[node name="PageBg" type="Sprite2D" parent="UI/Center/Credits" unique_id=1175184306]
+texture = ExtResource("75_porer")
+
+[node name="readnLearn" type="RichTextLabel" parent="UI/Center/Credits/PageBg" unique_id=1449741454]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -1453,7 +1523,7 @@ Thank you for playing Stellar Highway!
 Copyright © Stellar Stones"
 selection_enabled = true
 
-[node name="pageNum" type="Label" parent="UI/Center/Settings/PageBg" unique_id=682505063]
+[node name="pageNum" type="Label" parent="UI/Center/Credits/PageBg" unique_id=161055930]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -1473,7 +1543,7 @@ theme_override_fonts/font = SubResource("FontVariation_kt56a")
 theme_override_font_sizes/font_size = 28
 text = "CREDITS:"
 
-[node name="closeBTN" type="Button" parent="UI/Center/Settings/PageBg" unique_id=1439793386]
+[node name="closeBTN" type="Button" parent="UI/Center/Credits/PageBg" unique_id=1434796997]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -1502,6 +1572,7 @@ process_mode = 3
 [connection signal="pressed" from="UI/TopRight/shopBTN" to="UI/TopRight/shopBTN" method="_on_pressed"]
 [connection signal="pressed" from="UI/TopRight/tutBTN" to="UI/TopRight/shopBTN" method="_on_tut_btn_pressed"]
 [connection signal="pressed" from="UI/TopRight/settingsBTN" to="UI/TopRight/shopBTN" method="_on_settings_btn_pressed"]
+[connection signal="pressed" from="UI/TopRight/creditsBTN" to="UI/TopRight/shopBTN" method="_on_credits_btn_pressed"]
 [connection signal="pressed" from="UI/LeftCenter/Gamemodes/endlessBTN" to="UI/LeftCenter/Gamemodes/Gamemodes" method="_on_endless_btn_pressed"]
 [connection signal="pressed" from="UI/LeftCenter/Gamemodes/chaosBTN" to="UI/LeftCenter/Gamemodes/Gamemodes" method="_on_chaos_btn_pressed"]
 [connection signal="pressed" from="UI/LeftCenter/Gamemodes/missilesBTN" to="UI/LeftCenter/Gamemodes/Gamemodes" method="_on_missiles_btn_pressed"]
@@ -1509,3 +1580,4 @@ process_mode = 3
 [connection signal="pressed" from="UI/Center/tutorialBook/PageBg/forwardBTN" to="UI/Center/tutorialBook" method="_on_forward_btn_pressed"]
 [connection signal="pressed" from="UI/Center/tutorialBook/PageBg/backBTN" to="UI/Center/tutorialBook" method="_on_back_btn_pressed"]
 [connection signal="pressed" from="UI/Center/Settings/PageBg/closeBTN" to="UI/Center/Settings" method="_on_close_btn_pressed"]
+[connection signal="pressed" from="UI/Center/Credits/PageBg/closeBTN" to="UI/Center/Credits" method="_on_close_btn_pressed"]
