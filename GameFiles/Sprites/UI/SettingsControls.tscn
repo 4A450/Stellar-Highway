@@ -64,7 +64,7 @@ step = 10.0
 
 [node name="ReplaysCol" type="VBoxContainer" parent="Center/Columns"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 14
 
 [node name="ReplaysLabel" type="Label" parent="Center/Columns/ReplaysCol"]
 layout_mode = 2
@@ -73,7 +73,7 @@ text = "SAVED REPLAYS"
 horizontal_alignment = 1
 
 [node name="ReplayList" type="ItemList" parent="Center/Columns/ReplaysCol"]
-custom_minimum_size = Vector2(500, 360)
+custom_minimum_size = Vector2(500, 260)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/v_separation = 28
@@ -83,6 +83,32 @@ theme_override_font_sizes/font_size = 30
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 text = "WATCH SELECTED REPLAY"
+
+[node name="RenameRow" type="HBoxContainer" parent="Center/Columns/ReplaysCol"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="RenameEdit" type="LineEdit" parent="Center/Columns/ReplaysCol/RenameRow"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+placeholder_text = "NEW NAME"
+max_length = 40
+
+[node name="RenameBTN" type="Button" parent="Center/Columns/ReplaysCol/RenameRow"]
+custom_minimum_size = Vector2(160, 60)
+layout_mode = 2
+text = "RENAME"
+
+[node name="RenameNote" type="Label" parent="Center/Columns/ReplaysCol"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 18
+text = "\"last\" IS OVERWRITTEN EVERY RUN — RENAME IT TO KEEP THAT REPLAY FOREVER"
+horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="FolderBTN" type="Button" parent="Center/Columns/ReplaysCol"]
 custom_minimum_size = Vector2(0, 60)

@@ -522,6 +522,11 @@ _data = {
 &"onClick": SubResource("Animation_ceefh")
 }
 
+[sub_resource type="FontVariation" id="FontVariation_8obhe"]
+base_font = ExtResource("59_mhu74")
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+spacing_glyph = 2
+
 [sub_resource type="Animation" id="Animation_vofdg"]
 length = 0.001
 tracks/0/type = "value"
@@ -1242,8 +1247,10 @@ offset_left = 34.0
 offset_top = 18.0
 offset_right = 74.0
 offset_bottom = 62.0
-theme_override_font_sizes/font_size = 36
+theme_override_fonts/font = SubResource("FontVariation_8obhe")
+theme_override_font_sizes/font_size = 28
 text = "C"
+vertical_alignment = 1
 
 [node name="LeftCenter" type="Control" parent="UI" unique_id=347689947]
 layout_mode = 3

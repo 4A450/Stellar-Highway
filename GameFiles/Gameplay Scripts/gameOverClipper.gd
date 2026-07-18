@@ -2,9 +2,10 @@ extends Node2D
 ## The game-over screen — a film clapperboard that snaps shut on your final score.
 ##
 ## Reachable via the "clipperBoy" group. [method myCondolences] is the entry point the
-## player calls on death: it plays the "GG" sting, closes the clapperboard, prints the
-## final score (distance + bonus, zero-padded), and offers a SAVE REPLAY button for the
-## attempt that just ended. Its own button returns to the main menu.
+## player calls on death: it plays the "GG" sting, closes the clapperboard, and prints the
+## final score (distance + bonus, zero-padded). Its own button returns to the main menu.
+## (The attempt itself is auto-saved by Replay.stop() as the rolling last replay — rename
+## it in the Settings replay browser to keep it.)
 
 var bg_music := AudioStreamPlayer.new()
 
@@ -19,33 +20,13 @@ func _ready() -> void:
 func myCondolences() -> void:
 	bg_music.autoplay = true
 	add_child(bg_music)
+	get_tree().get_nodes_in_group("PowerupPopUps")[0].text = "REPLAY SAVED IN SETTINGS"
+	get_tree().get_nodes_in_group("PowerupPopUps")[0].get_node("AnimationPlayer").play("PopUp")
 	get_node("Top2").get_node("AnimationPlayer").play("close")
 	visible = true
 	score = get_tree().get_first_node_in_group("Score").sc
 	score += get_tree().get_first_node_in_group("Score").of
 	get_node("highScore").text = "00000000".substr(str(score).length()) + str(score)
-	_offer_replay_save()
-
-## Adds the SAVE REPLAY button under the score (built in code so every mode scene gets it
-## without scene edits — plain placeholder styling until it gets dedicated art). Pressing it
-## writes the just-finished recording to user://replays/ and locks the button.
-func _offer_replay_save() -> void:
-	if not Replay.has_pending():
-		return
-	var b := Button.new()
-	b.name = "SaveReplayBTN"
-	b.text = "SAVE REPLAY"
-	b.process_mode = Node.PROCESS_MODE_ALWAYS  # the tree is paused on the game-over screen
-	b.custom_minimum_size = Vector2(340, 64)
-	b.add_theme_font_size_override("font_size", 32)
-	var hs: Label = get_node("highScore")
-	b.position = hs.position + Vector2(hs.size.x / 2.0 - 170, hs.size.y + 24)
-	b.pressed.connect(func():
-		if Replay.save_pending():
-			b.text = "REPLAY SAVED"
-			b.disabled = true
-	)
-	add_child(b)
 
 func _on_animation_player_animation_finished(_anim_name:String) -> void:
 	await get_tree().create_timer(0.5).timeout

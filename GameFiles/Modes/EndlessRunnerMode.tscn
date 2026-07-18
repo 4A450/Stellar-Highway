@@ -873,6 +873,7 @@ anchor_right = 0.5
 grow_horizontal = 2
 
 [node name="PowerupTXT" type="Label" parent="UI/TopCenter" unique_id=1308624604]
+process_mode = 3
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

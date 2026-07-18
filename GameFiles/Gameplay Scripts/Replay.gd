@@ -18,11 +18,11 @@ extends Node
 ##   fading — so lines vanish in playback exactly when the ball rolled off them;
 ## [br]• pickup [b]events[/b]: star collections, powerup grabs, speed-booster hits.
 ##
-## On game over, player_physics calls [method stop]: the recording is auto-saved as the
-## rolling [b]last replay[/b] ([code]last.srp[/code], overwritten every run) and held in
-## memory, and the game-over screen offers SAVE REPLAY (gameOverClipper.gd) →
-## [method save_pending] writes a permanent timestamped file to [constant DIR] (atomic,
-## like the saves). Quitting mid-run discards the recording.
+## On game over, player_physics calls [method stop]: the finished recording is written straight
+## to [constant DIR] as the rolling [b]last replay[/b] ([code]last.srp[/code], atomic like the
+## saves), overwritten by every run. To keep a run permanently, the player [b]renames[/b] it in
+## the Settings replay browser ([method rename_replay]) — a renamed file is no longer "last",
+## so nothing overwrites it (the BombSquad model). Quitting mid-run discards the recording.
 ##
 ## [b]Watching[/b] — the Settings panel lists [method list_replays]; [method watch] opens
 ## ReplayViewer.tscn, which rebuilds the run: seed-reconstructed obstacles, streamed missiles,
@@ -45,7 +45,6 @@ const MODE_IDS := {"EndlessRunnerMode": 0, "ChaosMode": 1, "MissilesMode": 2}
 
 var recording := false
 var viewing_path := ""                  ## The file ReplayViewer.tscn should play (set by watch()).
-var _pending = null                     ## The finished-but-unsaved recording (Dictionary or null).
 var _mode := 0
 var _character := 0
 var _tick := 0                          ## Physics ticks since the run started (pause excluded).
@@ -97,7 +96,6 @@ func start_run() -> void:
 	_events = PackedFloat32Array()
 	_entities = []
 	_open = []
-	_pending = null
 	recording = true
 	# The starting platform is authored into the mode scene (not generator-spawned), so track
 	# it explicitly — streamed, since Missiles mode slides it away once the fight begins.
@@ -178,8 +176,8 @@ func record_event(kind: int, pos: Vector2) -> void:
 	_events.push_back(pos.x)
 	_events.push_back(pos.y)
 
-## Ends the recording (called from the game-over path with the final score) and keeps it in
-## memory. It is only written to disk if the player presses SAVE REPLAY ([method save_pending]).
+## Ends the recording (called from the game-over path with the final score) and writes it to
+## disk as the rolling last replay. Renaming the file later keeps it permanently.
 func stop(score: int) -> void:
 	if not recording:
 		return
@@ -202,7 +200,7 @@ func stop(score: int) -> void:
 		})
 	_entities = []
 	_open = []
-	_pending = {
+	_store(DIR + "/last.srp", {  # every run survives as the rolling "last replay"
 		"version": FILE_VERSION,
 		"mode": _mode,
 		"character": _character,
@@ -215,24 +213,31 @@ func stop(score: int) -> void:
 		"seg_fades": _seg_fades,
 		"events": _events,
 		"entities": entities,
-	}
-	_store(DIR + "/last.srp", _pending)  # every run survives as the rolling "last replay"
+	})
 
-## Whether there's a finished recording waiting to be saved (drives the game-over button).
-func has_pending() -> bool:
-	return _pending != null
+## Renames a saved replay — the way a run is kept permanently: once [code]last.srp[/code] has
+## another name, the next run's auto-save can't overwrite it (the BombSquad model).
+## [param new_base] is the wanted name without extension; invalid filename characters are
+## dropped, a clashing name is uniquified with _2/_3/…, and "last" itself is refused (it would
+## just be overwritten again). Returns the final file name, or "" if the rename was invalid.
+func rename_replay(old_name: String, new_base: String) -> String:
+	var dir := DirAccess.open(DIR)
+	if dir == null or not dir.file_exists(old_name):
+		return ""
+	var base := new_base.strip_edges().validate_filename().trim_suffix(".srp").strip_edges()
+	if base.is_empty() or base == "last":
+		return ""
+	if base + ".srp" == old_name:
+		return old_name  # renamed to itself — nothing to do
+	var target := base + ".srp"
+	var n := 2
+	while dir.file_exists(target):
+		target = "%s_%d.srp" % [base, n]
+		n += 1
+	return target if dir.rename(old_name, target) == OK else ""
 
-## Writes the pending recording to a timestamped file. Returns true on success.
-## The timestamp format keeps alphabetical order == chronological order.
-func save_pending() -> bool:
-	if _pending == null:
-		return false
-	var stamp: String = String(_pending["date"]).replace(":", ".")
-	_store(DIR + "/replay_%s_m%d.srp" % [stamp, _pending["mode"]], _pending)
-	_pending = null
-	return true
-
-## The saved replay filenames: the rolling last replay first, then the rest newest-first.
+## The saved replay filenames, newest recording first (sorted by the date stored inside each
+## file, so renamed files keep their true place), with the rolling last replay pinned on top.
 ## Only files the current format can actually play are listed — stale files from older
 ## versions (e.g. the pre-release ghost prototype's last_m*/best_m* files) would just
 ## bounce the viewer back to the menu, so they're hidden.
@@ -241,11 +246,15 @@ func list_replays() -> PackedStringArray:
 	var dir := DirAccess.open(DIR)
 	if dir == null:
 		return names
+	var entries: Array = []  # [file name, recorded date] pairs
 	for f in dir.get_files():
-		if f.ends_with(".srp") and load_file(DIR + "/" + f) != null:
-			names.append(f)
-	names.sort()
-	names.reverse()
+		if f.ends_with(".srp"):
+			var data = load_file(DIR + "/" + f)
+			if data != null:
+				entries.append([f, String(data.get("date", ""))])
+	entries.sort_custom(func(a, b): return a[1] > b[1])  # ISO dates: string order = time order
+	for e in entries:
+		names.append(e[0])
 	var li := names.find("last.srp")
 	if li > 0:  # the freshest run always sits at the top of the browser
 		names.remove_at(li)

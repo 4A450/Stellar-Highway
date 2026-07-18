@@ -60,10 +60,10 @@ Every run is recorded by the [`Replay`](GameFiles/Gameplay%20Scripts/Replay.gd) 
    Entities whose movement depends on the player (homing things) should be tracked with `force_stream = true` so their trajectory is recorded instead of simulated.
 3. **Delayed deaths need their visual moment stamped.** If your obstacle explodes but frees itself later (like missiles), call `Replay.mark_explosion(self)` when the blast *starts*, or the replayed explosion will run late.
 4. **New pickups** must call `Replay.record_event(...)` in their pickup handler; if the powerup rides on the player, add its scene + carry offset to the `CARRY` table in `ReplayViewer.gd`.
-5. **New group/name lookups** made by obstacles at spawn must also resolve in the replay viewer's world: it hosts the real `indicatorManager`, a puppet named `Player` (in the "Player" group), a "SpeedLine"-group trail, and a World parent with `true_scalex`/`true_scaley` ([`ReplayWorld.gd`](GameFiles/Gameplay%20Scripts/ReplayWorld.gd)). If your obstacle reaches for something new, extend `ReplayViewer._ready` accordingly.
+5. **New group/name lookups** made by obstacles at spawn must also resolve in the replay viewer's world: its World node runs the real [`changeSize.gd`](GameFiles/ScreenView%20Scripts/changeSize.gd) playfield script (group "Playfield", `true_scalex`/`true_scaley`), and it hosts the real `indicatorManager`, a puppet named `Player` (in the "Player" group, carrying the real player Camera2D), and a "SpeedLine"-group trail. If your obstacle reaches for something new, extend `ReplayViewer._ready` accordingly.
 6. **Changing the file format** (new arrays, changed meanings) requires bumping `Replay.FILE_VERSION` — old files are then cleanly ignored instead of misread. Purely additive, optional keys (read with `.get(key, fallback)`) don't need a bump.
 
-**Test it:** save a replay of a run featuring your content (game-over → SAVE REPLAY) and watch it back via Settings → SAVED REPLAYS. The reconstruction should match what you just played.
+**Test it:** finish a run featuring your content (it auto-saves as the "last" replay) and watch it back via Settings → SAVED REPLAYS. The reconstruction should match what you just played; rename the file there if you want to keep it across runs.
 
 ---
 

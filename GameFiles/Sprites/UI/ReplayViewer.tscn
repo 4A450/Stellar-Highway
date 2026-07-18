@@ -1,59 +1,149 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://d23hpi3k6sson"]
 
 [ext_resource type="PackedScene" uid="uid://cfgb46ftipq5r" path="res://GameFiles/Sprites/BG.tscn" id="1_bg"]
-[ext_resource type="Script" path="res://GameFiles/Gameplay Scripts/ReplayViewer.gd" id="2_viewer"]
-[ext_resource type="Script" path="res://GameFiles/Gameplay Scripts/ReplayWorld.gd" id="3_world"]
+[ext_resource type="Script" uid="uid://dlh7ehet38aq2" path="res://GameFiles/Gameplay Scripts/ReplayViewer.gd" id="2_viewer"]
+[ext_resource type="Script" uid="uid://5ciqi6304l5q" path="res://GameFiles/ScreenView Scripts/changeSize.gd" id="3_size"]
+[ext_resource type="FontFile" uid="uid://bnelx1c1ni330" path="res://GameFiles/Assets/fonts/PressStart2P-Regular.ttf" id="4_2ejx8"]
+[ext_resource type="Texture2D" uid="uid://bxfwhjbedlo87" path="res://GameFiles/SpinHead IMGS/UI/in-game/PauseBTN/PauseBTN.png" id="4_hhebr"]
+[ext_resource type="Texture2D" uid="uid://dynhqbcqas53g" path="res://GameFiles/SpinHead IMGS/Missile/Misslie.png" id="6_aauia"]
 
-[node name="ReplayViewer" type="Node2D"]
+[sub_resource type="FontVariation" id="FontVariation_8obhe"]
+base_font = ExtResource("4_2ejx8")
+variation_transform = Transform2D(1, 0.2, 0, 1, 0, 0)
+spacing_glyph = 2
+
+[sub_resource type="Animation" id="Animation_hhebr"]
+resource_name = "onClick"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0.9, 0.9), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 0
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(-0.033333335, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(16.5, 975), Vector2(12.5, 972)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2ejx8"]
+_data = {
+&"onClick": SubResource("Animation_hhebr")
+}
+
+[node name="ReplayViewer" type="Node2D" unique_id=334124945]
 script = ExtResource("2_viewer")
 
-[node name="BG" parent="." instance=ExtResource("1_bg")]
+[node name="World" type="Node2D" parent="." unique_id=1949786749]
+script = ExtResource("3_size")
 
-[node name="World" type="Node2D" parent="."]
-script = ExtResource("3_world")
+[node name="BG" parent="World" unique_id=2133445983 instance=ExtResource("1_bg")]
 
-[node name="Camera2D" type="Camera2D" parent="."]
-offset = Vector2(420, 540)
-
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=1671924897]
 process_mode = 3
 
-[node name="Title" type="Label" parent="UI"]
+[node name="TopLeft" type="Control" parent="UI" unique_id=542543]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Title" type="Label" parent="UI/TopLeft" unique_id=1965652870]
+layout_mode = 0
 offset_left = 40.0
 offset_top = 24.0
 offset_right = 1500.0
-offset_bottom = 84.0
-theme_override_font_sizes/font_size = 36
-
-[node name="BackBTN" type="Button" parent="UI"]
-offset_left = 1620.0
-offset_top = 24.0
-offset_right = 1880.0
 offset_bottom = 96.0
-theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(1, 0.6, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.92549, 0.278431, 0.12549, 1)
+theme_override_constants/shadow_offset_x = -2
+theme_override_constants/shadow_offset_y = 0
+theme_override_fonts/font = SubResource("FontVariation_8obhe")
+theme_override_font_sizes/font_size = 28
+vertical_alignment = 1
+
+[node name="TopRight" type="Control" parent="UI" unique_id=319922812]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+grow_horizontal = 0
+
+[node name="BackBTN" type="Button" parent="UI/TopRight" unique_id=977174955]
+layout_mode = 0
+offset_left = -300.0
+offset_top = 24.0
+offset_right = -40.0
+offset_bottom = 96.0
+theme_override_colors/font_color = Color(1, 0.6, 0, 1)
+theme_override_fonts/font = SubResource("FontVariation_8obhe")
+theme_override_font_sizes/font_size = 28
 text = "BACK"
+flat = true
 
-[node name="TimeLabel" type="Label" parent="UI"]
-offset_left = 120.0
-offset_top = 948.0
-offset_right = 500.0
-offset_bottom = 996.0
+[node name="BottomCenter" type="Control" parent="UI" unique_id=180206621]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -900.0
+offset_top = -1080.0
+offset_right = -900.0
+offset_bottom = -1080.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="TimeLabel" type="Label" parent="UI/BottomCenter" unique_id=2137952922]
+layout_mode = 0
+offset_left = 130.0
+offset_top = 975.0
+offset_right = 510.0
+offset_bottom = 1023.0
+theme_override_colors/font_color = Color(1, 0.6, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.92549, 0.278431, 0.12549, 1)
+theme_override_constants/shadow_offset_x = -2
+theme_override_constants/shadow_offset_y = 0
+theme_override_fonts/font = SubResource("FontVariation_8obhe")
+theme_override_font_sizes/font_size = 28
+vertical_alignment = 1
+
+[node name="PauseBTN" type="Button" parent="UI/BottomCenter" unique_id=1275203885]
+layout_mode = 0
+offset_left = 12.5
+offset_top = 972.0
+offset_right = 119.5
+offset_bottom = 1053.001
 theme_override_font_sizes/font_size = 30
+icon = ExtResource("4_hhebr")
+flat = true
 
-[node name="PauseBTN" type="Button" parent="UI"]
-offset_left = 40.0
-offset_top = 1000.0
-offset_right = 106.0
-offset_bottom = 1056.0
-theme_override_font_sizes/font_size = 30
-text = "II"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/BottomCenter/PauseBTN" unique_id=241415885]
+libraries/ = SubResource("AnimationLibrary_2ejx8")
+speed_scale = 8.0
 
-[node name="Timeline" type="HSlider" parent="UI"]
+[node name="Timeline" type="HSlider" parent="UI/BottomCenter" unique_id=1553923311]
+layout_mode = 0
 offset_left = 120.0
 offset_top = 1004.0
-offset_right = 1880.0
+offset_right = 1740.0
 offset_bottom = 1052.0
-step = 1.0
+theme_override_icons/grabber = ExtResource("6_aauia")
+theme_override_icons/grabber_highlight = ExtResource("6_aauia")
+theme_override_icons/grabber_disabled = ExtResource("6_aauia")
+theme_override_icons/tick = ExtResource("6_aauia")
 
-[connection signal="pressed" from="UI/BackBTN" to="." method="_on_back_btn_pressed"]
-[connection signal="pressed" from="UI/PauseBTN" to="." method="_on_pause_btn_pressed"]
+[connection signal="pressed" from="UI/TopRight/BackBTN" to="." method="_on_back_btn_pressed"]
+[connection signal="pressed" from="UI/BottomCenter/PauseBTN" to="." method="_on_pause_btn_pressed"]

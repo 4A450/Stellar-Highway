@@ -1,4 +1,4 @@
-[gd_scene load_steps=89 format=3 uid="uid://cuxhbt06a5evx"]
+[gd_scene format=3 uid="uid://cuxhbt06a5evx"]
 
 [ext_resource type="Script" uid="uid://5ciqi6304l5q" path="res://GameFiles/ScreenView Scripts/changeSize.gd" id="1_2cbvc"]
 [ext_resource type="Script" uid="uid://cu3xvdmw4g5gx" path="res://GameFiles/Gameplay Scripts/EndlessRunnerModeOST.gd" id="1_f3ou6"]
@@ -225,7 +225,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("21_qflgo")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Spin",
 "speed": 20.0
 }]
@@ -576,59 +576,59 @@ _data = {
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3we6w"]
 
-[node name="MissilesMode" type="Node2D"]
+[node name="MissilesMode" type="Node2D" unique_id=1622301128]
 script = ExtResource("1_f3ou6")
 
-[node name="Utils" type="Node2D" parent="."]
+[node name="Utils" type="Node2D" parent="." unique_id=586866309]
 script = ExtResource("2_m5gg3")
 
-[node name="sizeChange" type="Node2D" parent="."]
+[node name="sizeChange" type="Node2D" parent="." unique_id=1750561025]
 script = ExtResource("1_2cbvc")
 
-[node name="BG" parent="sizeChange" instance=ExtResource("2_2wcp1")]
+[node name="BG" parent="sizeChange" unique_id=969852607 instance=ExtResource("2_2wcp1")]
 metadata/_edit_horizontal_guides_ = [1080.0]
 metadata/_edit_lock_ = true
 
-[node name="Player" parent="sizeChange" instance=ExtResource("3_eyhm6")]
+[node name="Player" parent="sizeChange" unique_id=832646623 instance=ExtResource("3_eyhm6")]
 position = Vector2(3840, 390)
 
-[node name="SpeedLine" type="Line2D" parent="sizeChange"]
+[node name="SpeedLine" type="Line2D" parent="sizeChange" unique_id=755414377]
 width = 8.0
 width_curve = SubResource("Curve_k46wa")
 default_color = Color(0.905882, 0.435294, 0.0666667, 1)
 script = ExtResource("4_ejvoa")
 
-[node name="Building1" type="StaticBody2D" parent="sizeChange"]
+[node name="Building1" type="StaticBody2D" parent="sizeChange" unique_id=2113697066]
 position = Vector2(3948, 711)
 script = ExtResource("7_n3u1a")
 
-[node name="KillRange" type="Area2D" parent="sizeChange/Building1"]
+[node name="KillRange" type="Area2D" parent="sizeChange/Building1" unique_id=1076414825]
 position = Vector2(83, -343)
 scale = Vector2(1e-05, 1e-05)
 script = ExtResource("9_5spj6")
 
-[node name="KillerColl" type="CollisionShape2D" parent="sizeChange/Building1/KillRange"]
-position = Vector2(-2.265e+07, 3.9e+07)
+[node name="KillerColl" type="CollisionShape2D" parent="sizeChange/Building1/KillRange" unique_id=1283365670]
+position = Vector2(-22650000, 39000000)
 scale = Vector2(285000, 285000)
 shape = SubResource("RectangleShape2D_2c8mn")
 
-[node name="KillerColl2" type="CollisionShape2D" parent="sizeChange/Building1/KillRange"]
-position = Vector2(5.6e+06, 4.02e+07)
+[node name="KillerColl2" type="CollisionShape2D" parent="sizeChange/Building1/KillRange" unique_id=1304837972]
+position = Vector2(5600000, 40200000)
 scale = Vector2(285000, 285000)
 shape = SubResource("RectangleShape2D_oeval")
 
-[node name="KillerColl3" type="CollisionShape2D" parent="sizeChange/Building1/KillRange"]
-position = Vector2(5.775e+06, 7.65e+06)
+[node name="KillerColl3" type="CollisionShape2D" parent="sizeChange/Building1/KillRange" unique_id=890990934]
+position = Vector2(5775000, 7650000)
 scale = Vector2(285000, 285000)
 shape = SubResource("RectangleShape2D_msnl3")
 
-[node name="Building1" type="Sprite2D" parent="sizeChange/Building1"]
+[node name="Building1" type="Sprite2D" parent="sizeChange/Building1" unique_id=270196411]
 z_index = 5
 z_as_relative = false
 texture = ExtResource("7_aecxu")
 metadata/_edit_lock_ = true
 
-[node name="Light1" type="Sprite2D" parent="sizeChange/Building1"]
+[node name="Light1" type="Sprite2D" parent="sizeChange/Building1" unique_id=1890372660]
 z_index = 3
 z_as_relative = false
 position = Vector2(83, -343)
@@ -638,104 +638,102 @@ script = ExtResource("11_67jwp")
 anim = "zeroScale"
 metadata/_edit_lock_ = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="sizeChange/Building1/Light1"]
-libraries = {
-"": SubResource("AnimationLibrary_o1q1n")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="sizeChange/Building1/Light1" unique_id=1310450275]
+libraries/ = SubResource("AnimationLibrary_o1q1n")
 
-[node name="WalkableColl1" type="CollisionShape2D" parent="sizeChange/Building1"]
+[node name="WalkableColl1" type="CollisionShape2D" parent="sizeChange/Building1" unique_id=245495050]
 position = Vector2(-23.5, -292.5)
 shape = SubResource("RectangleShape2D_ywu4d")
 
-[node name="WalkableColl2" type="CollisionShape2D" parent="sizeChange/Building1"]
+[node name="WalkableColl2" type="CollisionShape2D" parent="sizeChange/Building1" unique_id=275842031]
 position = Vector2(121, -300)
 shape = SubResource("SegmentShape2D_6uxfh")
 
-[node name="GetThemOut" type="Node2D" parent="sizeChange"]
+[node name="GetThemOut" type="Node2D" parent="sizeChange" unique_id=2032551791]
 script = ExtResource("5_v7mx1")
 
-[node name="LightProjector" parent="sizeChange/GetThemOut" instance=ExtResource("10_cugs0")]
+[node name="LightProjector" parent="sizeChange/GetThemOut" unique_id=2081250329 instance=ExtResource("10_cugs0")]
 position = Vector2(3828.5, 1064)
 scale = Vector2(0.8, 0.8)
 path = "LightSource/AnimationPlayer"
 
-[node name="LightProjector2" parent="sizeChange/GetThemOut" instance=ExtResource("10_cugs0")]
+[node name="LightProjector2" parent="sizeChange/GetThemOut" unique_id=1178953994 instance=ExtResource("10_cugs0")]
 position = Vector2(4014.5, 1064)
 scale = Vector2(0.8, 0.8)
 anim = "Rotate1"
 path = "LightSource/AnimationPlayer"
 
-[node name="BarrierBuilding" type="StaticBody2D" parent="sizeChange"]
+[node name="BarrierBuilding" type="StaticBody2D" parent="sizeChange" unique_id=1387632349]
 position = Vector2(-282, 440)
 scale = Vector2(1.8, 1.8)
 
-[node name="KillRange" type="Area2D" parent="sizeChange/BarrierBuilding"]
+[node name="KillRange" type="Area2D" parent="sizeChange/BarrierBuilding" unique_id=1407561330]
 z_index = 10
 z_as_relative = false
 position = Vector2(87, -343)
 scale = Vector2(1e-05, 1e-05)
 script = ExtResource("9_5spj6")
 
-[node name="KillerColl2" type="CollisionShape2D" parent="sizeChange/BarrierBuilding/KillRange"]
-position = Vector2(5.6e+06, 3.95278e+07)
+[node name="KillerColl2" type="CollisionShape2D" parent="sizeChange/BarrierBuilding/KillRange" unique_id=1363194125]
+position = Vector2(5600000, 39527800)
 scale = Vector2(285000, 285000)
 shape = SubResource("RectangleShape2D_m4ho6")
 
-[node name="Building1" type="Sprite2D" parent="sizeChange/BarrierBuilding"]
+[node name="Building1" type="Sprite2D" parent="sizeChange/BarrierBuilding" unique_id=454329664]
 z_index = 5
 z_as_relative = false
 texture = ExtResource("7_aecxu")
 flip_h = true
 metadata/_edit_lock_ = true
 
-[node name="BarrierBuilding2" type="StaticBody2D" parent="sizeChange"]
+[node name="BarrierBuilding2" type="StaticBody2D" parent="sizeChange" unique_id=423164788]
 position = Vector2(7962, 440)
 scale = Vector2(1.8, 1.8)
 
-[node name="KillRange" type="Area2D" parent="sizeChange/BarrierBuilding2"]
+[node name="KillRange" type="Area2D" parent="sizeChange/BarrierBuilding2" unique_id=2070539405]
 z_index = 10
 z_as_relative = false
 position = Vector2(87, -343)
 scale = Vector2(1e-05, 1e-05)
 script = ExtResource("9_5spj6")
 
-[node name="KillerColl" type="CollisionShape2D" parent="sizeChange/BarrierBuilding2/KillRange"]
-position = Vector2(-2.29833e+07, 3.9e+07)
+[node name="KillerColl" type="CollisionShape2D" parent="sizeChange/BarrierBuilding2/KillRange" unique_id=1459273090]
+position = Vector2(-22983300, 39000000)
 scale = Vector2(285000, 285000)
 shape = SubResource("RectangleShape2D_bkpyp")
 
-[node name="Building1" type="Sprite2D" parent="sizeChange/BarrierBuilding2"]
+[node name="Building1" type="Sprite2D" parent="sizeChange/BarrierBuilding2" unique_id=580463341]
 z_index = 5
 z_as_relative = false
 texture = ExtResource("7_aecxu")
 metadata/_edit_lock_ = true
 
-[node name="MissileManager" type="Node2D" parent="sizeChange"]
+[node name="MissileManager" type="Node2D" parent="sizeChange" unique_id=1668504453]
 script = ExtResource("6_f888r")
 
-[node name="NOPE" type="StaticBody2D" parent="sizeChange"]
+[node name="NOPE" type="StaticBody2D" parent="sizeChange" unique_id=1143152504]
 position = Vector2(540, -10)
 script = ExtResource("8_01y1m")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="sizeChange/NOPE"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="sizeChange/NOPE" unique_id=727267017]
 shape = SubResource("RectangleShape2D_dcmw4")
 
-[node name="killArea" type="Area2D" parent="sizeChange/NOPE"]
+[node name="killArea" type="Area2D" parent="sizeChange/NOPE" unique_id=2091947965]
 position = Vector2(0, -20)
 script = ExtResource("9_5spj6")
 
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="sizeChange/NOPE/killArea"]
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="sizeChange/NOPE/killArea" unique_id=327926231]
 shape = SubResource("RectangleShape2D_dcmw4")
 
-[node name="indicatorManager" type="Node2D" parent="sizeChange"]
+[node name="indicatorManager" type="Node2D" parent="sizeChange" unique_id=1236452912]
 script = ExtResource("16_3i3wm")
 
-[node name="playerInput" type="Node2D" parent="."]
+[node name="playerInput" type="Node2D" parent="." unique_id=1148291590]
 script = ExtResource("11_dncbg")
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=24394418]
 
-[node name="BottomRight" type="Control" parent="UI"]
+[node name="BottomRight" type="Control" parent="UI" unique_id=1800458506]
 process_mode = 3
 visible = false
 layout_mode = 3
@@ -747,7 +745,7 @@ anchor_bottom = 1.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="muteBTN" type="Button" parent="UI/BottomRight"]
+[node name="muteBTN" type="Button" parent="UI/BottomRight" unique_id=1851949150]
 process_mode = 3
 layout_mode = 1
 anchors_preset = 2
@@ -763,33 +761,31 @@ icon = ExtResource("15_12snh")
 flat = true
 script = ExtResource("16_qitgm")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/BottomRight/muteBTN"]
-libraries = {
-"": SubResource("AnimationLibrary_1yvgl")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/BottomRight/muteBTN" unique_id=1329830493]
+libraries/ = SubResource("AnimationLibrary_1yvgl")
 speed_scale = 8.0
 
-[node name="TopLeft" type="Control" parent="UI"]
+[node name="TopLeft" type="Control" parent="UI" unique_id=1969300872]
 layout_mode = 3
 anchors_preset = 0
 
-[node name="ScoreI" type="Sprite2D" parent="UI/TopLeft"]
+[node name="ScoreI" type="Sprite2D" parent="UI/TopLeft" unique_id=740399563]
 position = Vector2(160, 72)
 scale = Vector2(0.4, 0.4)
 texture = ExtResource("12_l588u")
 
-[node name="Star" type="AnimatedSprite2D" parent="UI/TopLeft"]
+[node name="Star" type="AnimatedSprite2D" parent="UI/TopLeft" unique_id=1194442817]
 position = Vector2(102, 154)
 scale = Vector2(0.75, 0.75)
 sprite_frames = SubResource("SpriteFrames_jgpd4")
 animation = &"Spin"
 autoplay = "Spin"
 
-[node name="Glow" type="Sprite2D" parent="UI/TopLeft/Star"]
+[node name="Glow" type="Sprite2D" parent="UI/TopLeft/Star" unique_id=174483794]
 texture = ExtResource("22_micwi")
 metadata/_edit_lock_ = true
 
-[node name="Score" type="Label" parent="UI/TopLeft"]
+[node name="Score" type="Label" parent="UI/TopLeft" unique_id=1624230168]
 layout_mode = 0
 offset_left = 255.0
 offset_top = 60.0
@@ -804,7 +800,7 @@ theme_override_font_sizes/font_size = 28
 text = "0"
 script = ExtResource("30_csbdm")
 
-[node name="Stars" type="Label" parent="UI/TopLeft"]
+[node name="Stars" type="Label" parent="UI/TopLeft" unique_id=924198655]
 layout_mode = 0
 offset_left = 170.0
 offset_top = 144.0
@@ -819,14 +815,15 @@ theme_override_font_sizes/font_size = 28
 text = "0"
 script = ExtResource("31_0qii7")
 
-[node name="TopCenter" type="Control" parent="UI"]
+[node name="TopCenter" type="Control" parent="UI" unique_id=1537858472]
 layout_mode = 3
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 grow_horizontal = 2
 
-[node name="PowerupTXT" type="Label" parent="UI/TopCenter"]
+[node name="PowerupTXT" type="Label" parent="UI/TopCenter" unique_id=1987503141]
+process_mode = 3
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -848,19 +845,17 @@ theme_override_font_sizes/font_size = 28
 text = "ROCKSTAR"
 script = ExtResource("23_fh2ds")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/TopCenter/PowerupTXT"]
-libraries = {
-"": SubResource("AnimationLibrary_0iytn")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/TopCenter/PowerupTXT" unique_id=1823593269]
+libraries/ = SubResource("AnimationLibrary_0iytn")
 
-[node name="TopRight" type="Control" parent="UI"]
+[node name="TopRight" type="Control" parent="UI" unique_id=2118456177]
 layout_mode = 3
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 grow_horizontal = 0
 
-[node name="quitBTN" type="Button" parent="UI/TopRight"]
+[node name="quitBTN" type="Button" parent="UI/TopRight" unique_id=1907436601]
 process_mode = 2
 visible = false
 layout_mode = 0
@@ -872,13 +867,11 @@ focus_mode = 0
 icon = ExtResource("33_lcbmu")
 flat = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/TopRight/quitBTN"]
-libraries = {
-"": SubResource("AnimationLibrary_ygyrm")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/TopRight/quitBTN" unique_id=1918579620]
+libraries/ = SubResource("AnimationLibrary_ygyrm")
 speed_scale = 8.0
 
-[node name="repBTN" type="Button" parent="UI/TopRight"]
+[node name="repBTN" type="Button" parent="UI/TopRight" unique_id=1391141216]
 process_mode = 2
 visible = false
 layout_mode = 0
@@ -890,13 +883,11 @@ focus_mode = 0
 icon = ExtResource("34_6swgh")
 flat = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/TopRight/repBTN"]
-libraries = {
-"": SubResource("AnimationLibrary_bv1nr")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/TopRight/repBTN" unique_id=1005952088]
+libraries/ = SubResource("AnimationLibrary_bv1nr")
 speed_scale = 8.0
 
-[node name="pauseBTN" type="Button" parent="UI/TopRight"]
+[node name="pauseBTN" type="Button" parent="UI/TopRight" unique_id=1218466142]
 process_mode = 3
 layout_mode = 0
 offset_left = -161.0
@@ -908,58 +899,54 @@ icon = ExtResource("27_fngp2")
 flat = true
 script = ExtResource("28_gyrvj")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/TopRight/pauseBTN"]
-libraries = {
-"": SubResource("AnimationLibrary_0rogt")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/TopRight/pauseBTN" unique_id=2084248459]
+libraries/ = SubResource("AnimationLibrary_0rogt")
 speed_scale = 8.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/TopRight"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/TopRight" unique_id=1361709711]
 process_mode = 3
-libraries = {
-"": SubResource("AnimationLibrary_ha4wk")
-}
+libraries/ = SubResource("AnimationLibrary_ha4wk")
 speed_scale = 2.0
 
-[node name="BottomLeft" type="Control" parent="UI"]
+[node name="BottomLeft" type="Control" parent="UI" unique_id=967659868]
 layout_mode = 3
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 grow_vertical = 0
 
-[node name="SpeedI" type="Sprite2D" parent="UI/BottomLeft"]
+[node name="SpeedI" type="Sprite2D" parent="UI/BottomLeft" unique_id=495152272]
 position = Vector2(160, -72)
 scale = Vector2(0.4, 0.4)
 texture = ExtResource("13_3yjpj")
 
-[node name="RockstarGuitar" type="Sprite2D" parent="UI/BottomLeft"]
+[node name="RockstarGuitar" type="Sprite2D" parent="UI/BottomLeft" unique_id=1998245717]
 visible = false
 position = Vector2(114, -140)
 rotation = -0.523599
 texture = ExtResource("24_8ns7v")
 script = ExtResource("25_60fav")
 
-[node name="Jetpack" type="Sprite2D" parent="UI/BottomLeft"]
+[node name="Jetpack" type="Sprite2D" parent="UI/BottomLeft" unique_id=145205370]
 visible = false
 position = Vector2(190, -134)
 scale = Vector2(2, 2)
 texture = ExtResource("26_c5a6f")
 script = ExtResource("25_60fav")
 
-[node name="Doppelgänger" type="Sprite2D" parent="UI/BottomLeft"]
+[node name="Doppelgänger" type="Sprite2D" parent="UI/BottomLeft" unique_id=1234975732]
 visible = false
 position = Vector2(280, -134)
 texture = ExtResource("27_gi44i")
 script = ExtResource("25_60fav")
 
-[node name="Umbrella" type="Sprite2D" parent="UI/BottomLeft"]
+[node name="Umbrella" type="Sprite2D" parent="UI/BottomLeft" unique_id=437385975]
 visible = false
 position = Vector2(190, -209)
 texture = ExtResource("28_yka3b")
 script = ExtResource("25_60fav")
 
-[node name="Speed" type="Label" parent="UI/BottomLeft"]
+[node name="Speed" type="Label" parent="UI/BottomLeft" unique_id=250403182]
 layout_mode = 0
 offset_left = 255.0
 offset_top = -83.0
@@ -974,7 +961,7 @@ theme_override_font_sizes/font_size = 28
 text = "0"
 script = ExtResource("30_ofcoe")
 
-[node name="Center" type="Control" parent="UI"]
+[node name="Center" type="Control" parent="UI" unique_id=1232842991]
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -984,7 +971,7 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Helper" type="Label" parent="UI/Center"]
+[node name="Helper" type="Label" parent="UI/Center" unique_id=323527738]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -1009,7 +996,7 @@ dodge incoming waves
 of missiles)"
 script = ExtResource("32_ww4nk")
 
-[node name="ClipperBoard" type="Node2D" parent="UI/Center"]
+[node name="ClipperBoard" type="Node2D" parent="UI/Center" unique_id=1385738860]
 process_mode = 2
 visible = false
 position = Vector2(-2000, 1080)
@@ -1017,31 +1004,29 @@ rotation = -0.261799
 scale = Vector2(3.5, 3.5)
 script = ExtResource("41_ypahx")
 
-[node name="Top1" type="Sprite2D" parent="UI/Center/ClipperBoard"]
+[node name="Top1" type="Sprite2D" parent="UI/Center/ClipperBoard" unique_id=2047717643]
 position = Vector2(0, -144)
 texture = ExtResource("42_6j6kv")
 
-[node name="Top2" type="Sprite2D" parent="UI/Center/ClipperBoard"]
+[node name="Top2" type="Sprite2D" parent="UI/Center/ClipperBoard" unique_id=1035738448]
 position = Vector2(-224.5, -158.5)
 rotation = -0.392699
 texture = ExtResource("43_ycy78")
 offset = Vector2(224.5, -14.5)
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/Center/ClipperBoard/Top2"]
-libraries = {
-"": SubResource("AnimationLibrary_d83dw")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="UI/Center/ClipperBoard/Top2" unique_id=677213222]
+libraries/ = SubResource("AnimationLibrary_d83dw")
 speed_scale = 3.0
 
-[node name="ClipperBoardG" type="Sprite2D" parent="UI/Center/ClipperBoard"]
+[node name="ClipperBoardG" type="Sprite2D" parent="UI/Center/ClipperBoard" unique_id=599527593]
 visible = false
 position = Vector2(-0.5, -0.499969)
 texture = ExtResource("44_xjpt0")
 
-[node name="ClipperBoard" type="Sprite2D" parent="UI/Center/ClipperBoard"]
+[node name="ClipperBoard" type="Sprite2D" parent="UI/Center/ClipperBoard" unique_id=1614901907]
 texture = ExtResource("45_0i5r1")
 
-[node name="p2s" type="Label" parent="UI/Center/ClipperBoard"]
+[node name="p2s" type="Label" parent="UI/Center/ClipperBoard" unique_id=2088193511]
 offset_left = -214.0
 offset_top = -12.5
 offset_right = 186.0
@@ -1053,7 +1038,7 @@ text = "PRESS TO PROCEED"
 script = ExtResource("46_avshi")
 txt = "PRESS TO PROCEED "
 
-[node name="highScore" type="Label" parent="UI/Center/ClipperBoard"]
+[node name="highScore" type="Label" parent="UI/Center/ClipperBoard" unique_id=1794030618]
 offset_left = -25.0
 offset_top = -91.0
 offset_right = 175.0
@@ -1063,12 +1048,12 @@ theme_override_fonts/font = ExtResource("23_d61fr")
 theme_override_font_sizes/font_size = 25
 text = "00000000"
 
-[node name="Button" type="TouchScreenButton" parent="UI/Center/ClipperBoard"]
+[node name="Button" type="TouchScreenButton" parent="UI/Center/ClipperBoard" unique_id=1031214785]
 position = Vector2(0, -14)
 scale = Vector2(22.5, 14.5)
 shape = SubResource("RectangleShape2D_3we6w")
 
-[node name="Loading" parent="UI/Center" instance=ExtResource("33_8on6g")]
+[node name="Loading" parent="UI/Center" unique_id=1753541561 instance=ExtResource("33_8on6g")]
 
 [connection signal="body_entered" from="sizeChange/Building1/KillRange" to="sizeChange/Building1/KillRange" method="_on_body_entered"]
 [connection signal="body_entered" from="sizeChange/BarrierBuilding/KillRange" to="sizeChange/BarrierBuilding/KillRange" method="_on_body_entered"]

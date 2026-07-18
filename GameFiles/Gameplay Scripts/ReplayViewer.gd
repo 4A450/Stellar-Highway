@@ -21,9 +21,11 @@ extends Node2D
 ##   each missile detonates at its recorded explosion tick and leaves at its despawn tick.
 ## [br]• The [b]starting platform[/b] is scene-authored (no path + seed), so it's dissected out
 ##   of the recorded mode's scene and driven by its recorded (delta-compressed) trajectory.
-## [br]• [b]Warnings[/b] are real: the World hosts the actual indicatorManager (ReplayWorld.gd
-##   provides the playfield aspect vars it needs), so airships/hotel/hanging-bars announce
-##   themselves and dragons get their row arrows from the viewer at spawn.
+## [br]• The [b]World[/b] node runs the real changeSize.gd playfield script (group "Playfield"),
+##   so aspect-ratio scaling works exactly as in the modes, and the puppet keeps the genuine
+##   player Camera2D — per-mode framing, y-lock, look-ahead smoothing and CameraShake included.
+## [br]• [b]Warnings[/b] are real: the World hosts the actual indicatorManager, so airships/
+##   hotel/hanging-bars announce themselves and dragons get their row arrows at spawn.
 ## [br]• [b]Presentation[/b] mirrors gameplay: a random gameplay track, the star chime and
 ##   pickup sounds, the jetpack's flames + thrust hum, the speed trail, speed-thick ink, and
 ##   lines that glow underfoot.
@@ -64,11 +66,13 @@ const MODE_SCENES := [
 	"res://GameFiles/Modes/MissilesMode.tscn",
 ]
 
-@onready var cam: Camera2D = $Camera2D
-@onready var title: Label = $UI/Title
+@onready var title: Label = $UI/TopLeft/Title
 @onready var world: Node2D = $World
-@onready var timeline: HSlider = $UI/Timeline
-@onready var time_label: Label = $UI/TimeLabel
+@onready var timeline: HSlider = $UI/BottomCenter/Timeline
+@onready var time_label: Label = $UI/BottomCenter/TimeLabel
+var pause:Resource = preload("res://GameFiles/SpinHead IMGS/UI/in-game/PauseBTN/PauseBTN.png")
+var res:Resource = preload("res://GameFiles/SpinHead IMGS/UI/in-game/PauseBTN/ResBTN.png")
+
 
 var frames: PackedFloat32Array
 var states: PackedFloat32Array
@@ -115,15 +119,19 @@ func _ready() -> void:
 	entities.sort_custom(func(a, b): return a["t0"] < b["t0"])
 	sample_every = maxi(1, int(data.get("sample_every", 3)))
 	mode = clampi(int(data.get("mode", 0)), 0, MODE_SCENES.size() - 1)
-	title.text = "REPLAY  •  SCORE %d  •  %s" % [int(data.get("score", 0)), String(data.get("date", ""))]
+	title.text = "REPLAY • SCORE %d" % [int(data.get("score", 0))]
 	_make_popup_stubs()
+	# The World node runs the real changeSize.gd playfield script (group "Playfield"), so
+	# aspect scaling works exactly as in the modes; tell it which mode's camera framing to use.
+	world.gamemode = mode
 	var char_idx := int(data.get("character", 0))
-	puppet = _build_body_puppet("res://GameFiles/Sprites/Player.tscn", char_idx)
+	# keep_camera: the puppet keeps the real player Camera2D (offset, y-lock, smoothing, look-
+	# ahead drag, CameraShake) — changeSize drives its per-mode offset like in gameplay.
+	puppet = _build_body_puppet("res://GameFiles/Sprites/Player.tscn", char_idx, true)
 	puppet.position = Vector2(frames[0], frames[1])
 	puppet.rotation = frames[2]
 	puppet.add_to_group("Player")  # reactive obstacles (bats, falling lights) target the puppet
 	world.add_child(puppet)
-	cam.position = Vector2(puppet.position.x, 0)
 	# The REAL warning-indicator manager (it needs ../Player, so it comes after the puppet):
 	# reconstructed airships/hotels/hanging bars announce themselves to it just like in gameplay,
 	# and the beeping warnings spawn, track and free themselves with their own scripts.
@@ -229,8 +237,9 @@ func _seek(target: int) -> void:
 	if target == _tick:
 		return
 	_seeking = true
-	# Wipe everything reconstructed; keep the persistent cast.
-	var keep: Array = [puppet, trail, draw_cursor, world.get_node_or_null("indicatorManager")]
+	# Wipe everything reconstructed; keep the persistent cast (the BG lives in World now
+	# that it's a real playfield, so it must survive the sweep too).
+	var keep: Array = [puppet, trail, draw_cursor, world.get_node_or_null("BG"), world.get_node_or_null("indicatorManager")]
 	var arrows := world.get_node_or_null("MissileMarkerManager")
 	if arrows:  # rebuilt below — its arrow pool is about to be freed out from under it
 		arrows.free()
@@ -258,6 +267,9 @@ func _seek(target: int) -> void:
 	var i := clampi(_tick / sample_every, 0, frames.size() / 3 - 1)
 	puppet.position = Vector2(frames[i * 3], frames[i * 3 + 1])
 	puppet_speed = 0.0
+	var pcam: Camera2D = puppet.get_node_or_null("Camera2D")
+	if pcam:  # snap the smoothed gameplay camera instead of gliding across the level
+		pcam.reset_smoothing()
 	# One catch-up pass over every system.
 	_apply_states()
 	_spawn_due_entities()
@@ -275,11 +287,16 @@ func _seek(target: int) -> void:
 
 ## Builds a display-only body from a player-type scene: script removed before entering the
 ## tree (so no _ready, no physics, no group joins), everything but the character visuals freed.
-func _build_body_puppet(scene_path: String, char_idx: int) -> Node2D:
+## [param keep_camera] keeps the scene's Camera2D too — used for the main puppet only, so the
+## viewer is framed by the genuine gameplay camera (the clone must never steal the view).
+func _build_body_puppet(scene_path: String, char_idx: int, keep_camera: bool = false) -> Node2D:
 	var pl: Node2D = load(scene_path).instantiate()
 	pl.set_script(null)
+	var kept := ["Characters", "StarCollect"]  # the star-pickup chime rides along too
+	if keep_camera:
+		kept.append("Camera2D")
 	for c in pl.get_children():
-		if c.name != "Characters" and c.name != "StarCollect":  # keep the star-pickup chime too
+		if not (c.name in kept):
 			c.free()
 	pl.collision_layer = 0
 	pl.collision_mask = 0
@@ -308,11 +325,9 @@ func _advance_puppet() -> void:
 			var gsp := (puppet.position.x - prev.x) * 60.0
 			if absf(gsp) > 10.0:
 				spin_visual.rotate(((5.0 / 60.0) + (gsp / 120.0)) / 10.0)
-		cam.position.x = puppet.position.x
 		_update_trail()
 	else:
 		_done = true
-		title.text += "   —   REPLAY ENDED"
 
 ## The speed trail behind the puppet — the same grow-with-speed / shrink-when-slow logic
 ## as SpeedLine.gd, driven by the derived puppet speed.
@@ -462,6 +477,7 @@ func _despawn_due_entities() -> void:
 ## animation and bang play, and the missile leaves the warning groups so the beeping marker
 ## (and Missiles-mode arrows) stop tracking it.
 func _explode(n: Node2D) -> void:
+	Refs.shake(0.35)  # the puppet's kept camera carries CameraShake, so blasts kick like live
 	for grp in ["GMissiles", "Missiles", "TMissiles"]:
 		n.remove_from_group(grp)
 	for part in ["Misslie", "TimedMisslie", "Fire", "killArea", "killMe"]:
@@ -687,7 +703,11 @@ func _strip_scripts(root: Node) -> void:
 ## timeline still scrubs — and seeking while paused works, frame-stepping the frozen scene.
 func _on_pause_btn_pressed() -> void:
 	get_tree().paused = not get_tree().paused
-	$UI/PauseBTN.text = ">" if get_tree().paused else "II"
+	if get_tree().paused:
+		$UI/BottomCenter/PauseBTN.icon = res
+	else:
+		$UI/BottomCenter/PauseBTN.icon = pause
+	$UI/BottomCenter/PauseBTN.get_node("AnimationPlayer").play("onClick")
 
 func _back_to_menu() -> void:
 	get_tree().paused = false  # never hand a paused tree back to the menu
